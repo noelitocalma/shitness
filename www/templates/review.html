@@ -5,7 +5,7 @@
         {{ questions[questionNumber].question }}
         <div class=""
           ng-if="showAnswer === true">
-           Answer: {{ questions[questionNumber].answer }}
+           Answer: {{ !questions[questionNumber].hasOwnProperty('choices') ? questions[questionNumber].answer : questions[questionNumber].choices[questions[questionNumber].answer] }}
         </div>
         <br>
         <button class="button button-outline button-positive"
