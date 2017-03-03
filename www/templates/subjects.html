@@ -1,0 +1,11 @@
+<ion-view view-title="Subjects">
+  <ion-content>
+    <ion-list>
+      <ion-item
+        ng-repeat="subject in subjects"
+        ng-href="#/app/subjects/{{ courseName }}/{{ subject.name }}">
+          {{ subject.name }}
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-view>

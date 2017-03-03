@@ -1,0 +1,45 @@
+<ion-view cache-view="false" title="{{ quizInProgress === true ? 'Question ' + (questionNumber + 1) : 'Results' }}">
+  <ion-content>
+    <div class=""
+      ng-if="quizInProgress === true">
+        <div class=""
+          ng-if="questions.length > 0">
+            <div class="">
+              {{ timer === 21 ? '20' : timer }}
+            </div>
+            {{ questions[questionNumber].question }}
+            <label ng-if="!questions[questionNumber].hasOwnProperty('choices')" class="item item-input">
+              <input type="text" placeholder="Type your answer here" ng-model="choice.key" ng-keyup="$event.keyCode == 13 ? nextQuestion() : null">
+            </label>
+            <div class="" ng-if="questions[questionNumber].hasOwnProperty('choices')">
+              <ion-radio
+                ng-repeat="(key, value) in questions[questionNumber].choices"
+                ng-model="choice.key"
+                ng-value="key">{{ value }}</ion-radio>
+              <button class="button button-outline button-positive"
+                ng-click="nextQuestion()">
+                  Next
+              </button>
+            </div>
+        </div>
+    </div>
+    <div class=""
+      ng-if="quizInProgress === false">
+        You got {{ score + '/' + questions.length }} CORRECT ANSWERS
+        <div class="">
+          <a ng-href="#/app/subjects/{{ courseName }}/{{ subjectName }}">continue</a>
+          <a href="javasctip:void(0)" on-tap="showFullDetails()">see full details</a>
+        </div>
+    </div>
+    <div class=""
+      ng-if="fullDetailsMode === true">
+      <ul class="list">
+        <li ng-repeat="question in questions" class="item">
+          Question: {{ question.question }}<br>
+          Correct answer: {{ question.answer }} - {{ question.choices[question.answer] }}<br>
+          Your answer: {{ question.userAnswer }} - {{ question.choices[question.userAnswer] }}
+        </li>
+      </ul>
+    </div>
+  </ion-content>
+</ion-view>

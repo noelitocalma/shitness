@@ -1,0 +1,26 @@
+<ion-view title="Review">
+  <ion-content>
+    <div class=""
+      ng-if="reviewInProgress === true">
+        {{ questions[questionNumber].question }}
+        <div class=""
+          ng-if="showAnswer === true">
+           Answer: {{ questions[questionNumber].answer }}
+        </div>
+        <br>
+        <button class="button button-outline button-positive"
+          ng-click="setShowAnswer(true)">
+            Show Answer
+        </button>
+        <button class="button button-outline button-positive"
+          ng-click="nextQuestion()">
+            Next Question
+        </button>
+    </div>
+    <div class=""
+      ng-if="reviewInProgress === false">
+        All done
+        <a ng-href="#/app/subjects/{{ courseName }}/{{ subjectName }}">go back</a>
+    </div>
+  </ion-content>
+</ion-view>
