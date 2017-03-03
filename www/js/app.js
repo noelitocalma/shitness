@@ -465,6 +465,16 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ngStorage'])
     controller: 'AppCtrl'
   })
 
+  .state('app.aboutus', {
+    url: '/aboutus',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/aboutus.html',
+        controller: 'AppCtrl'
+      }
+    }
+  })
+
   .state('app.courses', {
     url: '/courses',
     views: {
