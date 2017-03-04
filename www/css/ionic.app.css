@@ -9867,13 +9867,26 @@ a.button {
   border-radius: 100%; }
 
 .menu-content {
-  background-image: url("/../img/bgwhite.jpg");
+  background-image: url("../img/bgwhite.jpg");
   background-repeat: no-repeat;
   background-size: 100% 100%; }
 
 .button.button-balanced.activated,
 .button.button-balanced.active {
   background-color: #004b53; }
+
+.popup-body {
+  text-align: center; }
+
+.popup-assertive .popup-head {
+  background-color: #ef473a; }
+  .popup-assertive .popup-head .popup-title {
+    color: #fff !important; }
+
+.popup-success .popup-head {
+  background-color: #003439; }
+  .popup-success .popup-head .popup-title {
+    color: #fff !important; }
 
 a {
   text-decoration: none; }
@@ -9922,3 +9935,12 @@ a {
 
 .img-fluid {
   max-width: 100%; }
+
+.pos-fixed {
+  position: fixed; }
+
+.pull-right {
+  float: right; }
+
+.pull-left {
+  float: left; }

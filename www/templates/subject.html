@@ -1,7 +1,11 @@
 <ion-view view-title="Subject">
   <ion-content class="menu-content">
     <div class="padding">
-      <h3 class="title text-center" ng-bind="subjectName"></h3>
+      <h3 class="title text-center">
+        <span ng-bind="subjectName"></span>
+        <i class="icon ion-android-delete assertive pull-right"
+          ng-if="customId" ng-click="deleteSets(customId)"></i>
+      </h3>
       <div class="row text-center">
         <a class="col" ng-href="#/app/review/{{ courseName }}/{{ customId || subjectName }}">
           <div class="balanced padding-bottom">Review</div>
@@ -11,6 +15,16 @@
           <div class="balanced padding-bottom">Quiz</div>
           <img class="img-fluid" src="img/exam.png" alt="">
         </a>
+      </div>
+
+      <div class="card">
+        <div class="item item-divider">Terms & Definition</div>
+        <div class="item" ng-repeat="question in questions">
+          <div class="item-text-wrap" ng-bind="question.question"></div> -
+          <b ng-bind="question.hasOwnProperty('choices') && question.choices
+            ? question.choices[question.answer] : question.answer"></b>
+        </div>
+
       </div>
     </div>
   </ion-content>

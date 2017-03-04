@@ -38,7 +38,7 @@ angular.module('starter.controllers', [])
   $scope.courses = $localStorage.courses
 })
 
-.controller('CreateSetCtrl', function($scope, $localStorage) {
+.controller('CreateSetCtrl', function($scope, $localStorage, $ionicPopup) {
   var choiceKeys = 'abcdefghijklmnopqrstuvwxyz'
 
   $scope.set = {
@@ -57,15 +57,35 @@ angular.module('starter.controllers', [])
   }
 
   $scope.addChoice = function() {
-    if ($scope.question.newChoice === '') return
+    if (!$scope.question.newChoice) {
+      $scope.showValidationErrorAlert('Choice can\'t be empty')
+      return
+    }
+
     $scope.question.choices.push($scope.question.newChoice)
     $scope.question.newChoice = ''
   }
 
+  $scope.deleteChoice = function (choice) {
+    $scope.question.choices.splice(
+      $scope.question.choices.indexOf(choice), 1
+    )
+  }
+
   $scope.addQuestion = function() {
+    if (!$scope.question.answer || !$scope.question) {
+      let content = !$scope.question.question
+        ? 'Question can\'t be empty' : 'Answer can\'t be empty'
+      $scope.showValidationErrorAlert(content)
+      return
+    }
     if ($scope.question.answerType === 'text') {
       delete $scope.question.choices
     } else if ($scope.question.answerType === 'choices') {
+      if ($scope.question.choices.length < 2) {
+        $scope.showValidationErrorAlert('Add atleast 2 choices')
+        return
+      }
       var choices = {}
       $scope.question.choices.forEach(function(choice, i) {
         choices[choiceKeys.charAt(i)] = choice
@@ -87,8 +107,19 @@ angular.module('starter.controllers', [])
     }
   }
 
+  $scope.deleteQuestion = function (question) {
+    $scope.set.questions.splice(
+      $scope.set.questions.indexOf(question), 1
+    )
+  }
+
   $scope.addSet = function() {
-    if ($scope.set.name === '' || $scope.set.questions.length === 0) return
+    if (!$scope.set.name || $scope.set.questions.length === 0) {
+      let content = !$scope.set.name
+        ? `Set name can't be empty` : `Add atleast 1 question`
+      $scope.showValidationErrorAlert(content)
+      return
+    }
     var words = $scope.set.name.split(' ')
     var acronym = ''
 
@@ -106,11 +137,40 @@ angular.module('starter.controllers', [])
       logo: '',
       questions: []
     }
+
+    var onSetCreatedPopup = $ionicPopup.confirm({
+      title: 'Set Created',
+      cssClass: 'popup-success',
+      template: 'Do you want to create another?',
+      cancelText: 'No',
+      cancelType: 'button-calm',
+      okText: 'Yes',
+      okType: 'button-balanced'
+    });
+
+    onSetCreatedPopup.then(function(res) {
+      if(!res) {
+        window.location.href = window.location.origin + '#/app/mysets'
+      }
+    });
   }
+
+  $scope.showValidationErrorAlert = function(content) {
+    var alertPopup = $ionicPopup.alert({
+      title: 'Validation Error',
+      cssClass: 'popup-assertive',
+      template: content,
+      okType: 'button-assertive'
+    });
+  };
 })
 
 .controller('MySetsCtrl', function($scope, $localStorage) {
   $scope.sets = $localStorage.customSets
+
+  $scope.gotoLink = function (link) {
+    window.location.href = window.location.origin + link
+  }
 })
 
 .controller('SubjectsCtrl', function($scope, $stateParams, $localStorage) {
@@ -119,12 +179,42 @@ angular.module('starter.controllers', [])
   $scope.subjects = getCourse(courses, $scope.courseName).subjects || [];
 })
 
-.controller('SubjectCtrl', function($scope, $stateParams, $localStorage) {
+.controller('SubjectCtrl', function($scope, $stateParams, $localStorage, $ionicPopup) {
+  var courses = $stateParams.courseName !== 'custom'
+    ? $localStorage.courses : $localStorage.customSets
+
   $scope.courseName = $stateParams.courseName
   $scope.subjectName = getCustomName($localStorage.customSets, $stateParams.subjectName) || $stateParams.subjectName
 
-  if ($scope.subjectName !== $stateParams.subjectName) {
+  if ($stateParams.courseName !== 'custom') {
+    $scope.questions = getQuestions(courses, $scope.courseName, $scope.subjectName)
+  } else {
+    let sets = $localStorage.customSets[$localStorage.customSets.map((v) => v.id ).indexOf(parseInt($stateParams.subjectName))]
+     $scope.questions = sets.questions
+  }
+
+  if ($scope.subjectName !== $stateParams.subjecName) {
     $scope.customId = $stateParams.subjectName
+  }
+
+  $scope.deleteSets = function (id) {
+    var confirmPopup = $ionicPopup.confirm({
+      title: 'Consume Ice Cream',
+      template: 'Are you sure you want to delete this set?',
+      cssClass: 'popup-assertive',
+      cancelType: 'button-calm',
+      okText: 'Delete',
+      okType: 'button-assertive'
+    });
+
+    confirmPopup.then(function(res) {
+      if(res) {
+        let index = $localStorage.customSets.map((v) => v.id).indexOf(parseInt(id))
+        let sets = $localStorage.customSets
+        sets.splice(index, 1)
+        window.location.href = window.location.origin + '#/app/mysets'
+      }
+    });
   }
 })
 

@@ -1,0 +1,15 @@
+.popup-body { text-align: center; }
+.popup-assertive {
+  .popup-head {
+    background-color: $assertive;
+
+    .popup-title { color: #fff !important; }
+  }
+}
+
+.popup-success {
+  .popup-head {
+    background-color: $balanced;
+    .popup-title { color: #fff !important; }
+  }
+}

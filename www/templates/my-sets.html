@@ -1,12 +1,17 @@
 <ion-view cache-view="false" view-title="My Sets">
   <ion-content class="menu-content">
-    <a
-      ng-href="#/app/subjects/custom/{{ set.id }}"
-      ng-repeat="set in sets">
-        <div class="card">
-          <div class="item item-divider">{{ set.acronym }}</div>
-          <div class="item item-text-wrap">{{ set.name }}</div>
-        </div>
-    </a>
+    <ion-list class="list-subjects">
+      <ion-item class="list-subjects__item" ng-repeat="set in sets"
+        ng-click="gotoLink('/#/app/subjects/custom/{{ set.id }}')">
+        <span ng-bind="set.name"></span>
+      </ion-item>
+    </ion-list>
+
+    <div class="card text-center padding" ng-if="sets.length <= 0">
+      <i class="icon ion-alert-circled h1 energized"></i>
+      <h2 class="item-text-wrap">You don't have any sets yet.</h2>
+      <br>
+      <a class="button button-balanced" href="#/app/createset">Create</a>
+    </div>
   </ion-content>
 </ion-view>
