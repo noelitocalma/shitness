@@ -1,0 +1,12 @@
+<ion-view cache-view="false" view-title="My Sets">
+  <ion-content class="menu-content">
+    <a
+      ng-href="#/app/subjects/custom/{{ set.id }}"
+      ng-repeat="set in sets">
+        <div class="card">
+          <div class="item item-divider">{{ set.acronym }}</div>
+          <div class="item item-text-wrap">{{ set.name }}</div>
+        </div>
+    </a>
+  </ion-content>
+</ion-view>
