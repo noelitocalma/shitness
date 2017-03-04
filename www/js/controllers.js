@@ -38,15 +38,94 @@ angular.module('starter.controllers', [])
   $scope.courses = $localStorage.courses
 })
 
+.controller('CreateSetCtrl', function($scope, $localStorage) {
+  var choiceKeys = 'abcdefghijklmnopqrstuvwxyz'
+
+  $scope.set = {
+    name: '',
+    acronym: '',
+    logo: '',
+    questions: []
+  }
+
+  $scope.question = {
+    newChoice: '',
+    answerType: 'text',
+    question: '',
+    choices: [],
+    answer: ''
+  }
+
+  $scope.addChoice = function() {
+    if ($scope.question.newChoice === '') return
+    $scope.question.choices.push($scope.question.newChoice)
+    $scope.question.newChoice = ''
+  }
+
+  $scope.addQuestion = function() {
+    if ($scope.question.answerType === 'text') {
+      delete $scope.question.choices
+    } else if ($scope.question.answerType === 'choices') {
+      var choices = {}
+      $scope.question.choices.forEach(function(choice, i) {
+        choices[choiceKeys.charAt(i)] = choice
+      })
+      $scope.question.choices = choices
+    }
+
+    delete $scope.question.newChoice
+    delete $scope.question.answerType
+
+    $scope.set.questions.push($scope.question)
+
+    $scope.question = {
+      newChoice: '',
+      answerType: 'text',
+      question: '',
+      choices: [],
+      answer: ''
+    }
+  }
+
+  $scope.addSet = function() {
+    if ($scope.set.name === '' || $scope.set.questions.length === 0) return
+    var words = $scope.set.name.split(' ')
+    var acronym = ''
+
+    words.forEach(function(word) {
+      acronym += word.charAt(0)
+    })
+
+    $scope.set.acronym = acronym.toUpperCase()
+    $scope.set.id = Math.round(Math.random() * 100000)
+    $localStorage.customSets.push(angular.copy($scope.set))
+
+    $scope.set = {
+      name: '',
+      acronym: '',
+      logo: '',
+      questions: []
+    }
+  }
+})
+
+.controller('MySetsCtrl', function($scope, $localStorage) {
+  $scope.sets = $localStorage.customSets
+})
+
 .controller('SubjectsCtrl', function($scope, $stateParams, $localStorage) {
   var courses = $localStorage.courses
   $scope.courseName = $stateParams.courseName
   $scope.subjects = getCourse(courses, $scope.courseName).subjects || [];
 })
 
-.controller('SubjectCtrl', function($scope, $stateParams) {
+.controller('SubjectCtrl', function($scope, $stateParams, $localStorage) {
   $scope.courseName = $stateParams.courseName
-  $scope.subjectName = $stateParams.subjectName
+  $scope.subjectName = getCustomName($localStorage.customSets, $stateParams.subjectName) || $stateParams.subjectName
+
+  if ($scope.subjectName !== $stateParams.subjectName) {
+    $scope.customId = $stateParams.subjectName
+  }
 })
 
 .controller('ReviewCtrl', function($scope, $stateParams, $localStorage) {
@@ -54,10 +133,15 @@ angular.module('starter.controllers', [])
   var courseName = $scope.courseName = $stateParams.courseName
   var subjectName = $scope.subjectName = $stateParams.subjectName
 
+  if ($stateParams.courseName !== 'custom') {
+    $scope.questions = shuffle(getQuestions(courses, courseName, subjectName))
+  } else {
+    $scope.questions = shuffle(getCustomQuestions($localStorage.customSets, $stateParams.subjectName))
+  }
+
   $scope.reviewInProgress = true
   $scope.questionNumber = 0
   $scope.showAnswer = false
-  $scope.questions = shuffle(getQuestions(courses, courseName, subjectName))
 
   $scope.setShowAnswer = function(show) {
     $scope.showAnswer = show
@@ -77,10 +161,15 @@ angular.module('starter.controllers', [])
   var courseName = $scope.courseName = $stateParams.courseName
   var subjectName = $scope.subjectName = $stateParams.subjectName
 
+  if ($stateParams.courseName !== 'custom') {
+    $scope.questions = shuffle(getQuestions(courses, courseName, subjectName))
+  } else {
+    $scope.questions = shuffle(getCustomQuestions($localStorage.customSets, $stateParams.subjectName))
+  }
+
   $scope.quizInProgress = true
   $scope.fullDetailsMode = false
   $scope.questionNumber = 0
-  $scope.questions = shuffle(getQuestions(courses, courseName, subjectName))
   $scope.score = 0
   $scope.timer = 20
   $scope.choice = {
@@ -134,6 +223,22 @@ function getQuestions(courses, courseName, subjectName) {
   var subject = getCourse(courses, courseName).subjects;
   var questions = subject.find(function(_subject) {
     return _subject.name === subjectName
+  }).questions
+
+  return angular.copy(questions) || []
+}
+
+function getCustomName(sets, id) {
+  var set = sets.find(function(set) {
+    return set.id.toString() === id
+  }) || {}
+
+  return angular.copy(set.name) || undefined
+}
+
+function getCustomQuestions(sets, id) {
+  var questions = sets.find(function(set) {
+    return set.id.toString() === id
   }).questions
 
   return angular.copy(questions) || []

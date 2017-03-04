@@ -1,0 +1,51 @@
+<ion-view cache-view="false" view-title="Create Set">
+  <ion-content class="menu-content">
+    <label class="item item-input">
+      <input type="text" placeholder="set name" ng-model="set.name">
+    </label>
+    <h4>New Question</h4>
+    <label class="item item-input">
+      <input type="text" placeholder="Question" ng-model="question.question">
+    </label>
+    <label class="item item-input item-select">
+      <div class="input-label">
+        Answer type
+      </div>
+      <select ng-model="question.answerType">
+        <option value="text">Text</option>
+        <option value="choices">Choices</option>
+      </select>
+    </label>
+    <label class="item item-input">
+      <input type="text" placeholder="answer" ng-model="question.answer">
+    </label>
+    <div class=""
+      ng-if="question.answerType === 'choices'">
+        <label class="item item-input">
+          <input type="text" placeholder="choice" ng-model="question.newChoice">
+        </label>
+        <button class="button button-block button-balanced" type="button" ng-click="addChoice()">+</button>
+        <h4>choices</h4>
+        <div class=""
+          ng-repeat="choice in question.choices">
+            {{ choice }}
+        </div>
+    </div>
+    <button class="button button-block button-balanced" type="button" ng-click="addQuestion()">Add Question</button>
+    <h4>Questions</h4>
+    <div class=""
+      ng-repeat="question in set.questions">
+        <div class="">
+          Question: {{ question.question }}
+        </div>
+        <div class="">
+          Answer: {{ question.answer }}
+        </div>
+        <div class="" ng-if="question.choices">
+          Choices: {{ question.choices }}
+        </div>
+    </div>
+
+    <button class="button button-block button-balanced" type="button" ng-click="addSet()">Add Set</button>
+  </ion-content>
+</ion-view>

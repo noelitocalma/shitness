@@ -21,6 +21,10 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ngStorage'])
     }
   });
 
+  if (!$localStorage.customSets) {
+    $localStorage.customSets = []
+  }
+
   if ($localStorage.courses) return
 
   $localStorage.courses = [
@@ -481,6 +485,26 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ngStorage'])
       'menuContent': {
         templateUrl: 'templates/courses.html',
         controller: 'CoursesCtrl'
+      }
+    }
+  })
+
+  .state('app.createset', {
+    url: '/createset',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/create-set.html',
+        controller: 'CreateSetCtrl'
+      }
+    }
+  })
+
+  .state('app.mysets', {
+    url: '/mysets',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/my-sets.html',
+        controller: 'MySetsCtrl'
       }
     }
   })
