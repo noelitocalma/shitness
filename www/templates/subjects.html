@@ -1,7 +1,7 @@
 <ion-view view-title="Subjects">
-  <ion-content>
-    <ion-list>
-      <ion-item
+  <ion-content class="menu-content">
+    <ion-list class="list-subjects">
+      <ion-item class="list-subjects__item"
         ng-repeat="subject in subjects"
         ng-href="#/app/subjects/{{ courseName }}/{{ subject.name }}">
           {{ subject.name }}

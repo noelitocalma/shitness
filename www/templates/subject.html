@@ -1,6 +1,17 @@
 <ion-view view-title="Subject">
-  <ion-content>
-    <a ng-href="#/app/review/{{ courseName }}/{{ subjectName }}">Review</a>
-    <a ng-href="#/app/quiz/{{ courseName }}/{{ subjectName }}">Quiz</a>
+  <ion-content class="menu-content">
+    <div class="padding">
+      <h3 class="title text-center" ng-bind="subjectName"></h3>
+      <div class="row text-center">
+        <a class="col" ng-href="#/app/review/{{ courseName }}/{{ subjectName }}">
+          <div class="balanced padding-bottom">Review</div>
+          <img class="img-fluid" src="img/review.png" alt="">
+        </a>
+        <a class="col" ng-href="#/app/quiz/{{ courseName }}/{{ subjectName }}">
+          <div class="balanced padding-bottom">Quiz</div>
+          <img class="img-fluid" src="img/exam.png" alt="">
+        </a>
+      </div>
+    </div>
   </ion-content>
 </ion-view>

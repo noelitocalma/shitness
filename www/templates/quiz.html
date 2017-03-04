@@ -1,45 +1,53 @@
 <ion-view cache-view="false" title="{{ quizInProgress === true ? 'Question ' + (questionNumber + 1) : 'Results' }}">
-  <ion-content>
+  <ion-content class="menu-content">
     <div class=""
       ng-if="quizInProgress === true">
         <div class=""
           ng-if="questions.length > 0">
-            <div class="">
-              {{ timer === 21 ? '20' : timer }}
+            <div class="w-100 padding-horizontal padding-top text-center">
+              <h4 class="assertive">
+                <i class="icon ion-ios-timer"></i>
+                <span ng-bind="timer === 21 ? '20' : timer"></span>
+              </h4>
             </div>
-            {{ questions[questionNumber].question }}
-            <label ng-if="!questions[questionNumber].hasOwnProperty('choices')" class="item item-input">
-              <input type="text" placeholder="Type your answer here" ng-model="choice.key" ng-keyup="$event.keyCode == 13 ? nextQuestion() : null">
-            </label>
-            <div class="" ng-if="questions[questionNumber].hasOwnProperty('choices')">
-              <ion-radio
-                ng-repeat="(key, value) in questions[questionNumber].choices"
-                ng-model="choice.key"
-                ng-value="key">{{ value }}</ion-radio>
-              <button class="button button-outline button-positive"
-                ng-click="nextQuestion()">
-                  Next
-              </button>
+            <div class="card">
+              <div class="item item-divider">Question</div>
+              <div class="item item-text-wrap" ng-bind="questions[questionNumber].question"></div>
+            </div>
+            <div class="padding">
+              <label ng-if="!questions[questionNumber].hasOwnProperty('choices')" class="item item-input">
+                <input type="text" placeholder="Type your answer here" ng-model="choice.key" ng-keyup="$event.keyCode == 13 ? nextQuestion() : null">
+              </label>
+              <div class="" ng-if="questions[questionNumber].hasOwnProperty('choices')">
+                <ion-radio
+                  ng-repeat="(key, value) in questions[questionNumber].choices"
+                  ng-model="choice.key"
+                  ng-value="key">{{ value }}</ion-radio>
+                <button class="button button-block button-balanced"
+                  ng-click="nextQuestion()">
+                    Next
+                </button>
+              </div>
             </div>
         </div>
     </div>
-    <div class=""
+    <div class="card padding text-center"
       ng-if="quizInProgress === false">
-        You got {{ score + '/' + questions.length }} CORRECT ANSWERS
+        <h4>You got</h4>
+        <h1 style="margin-top: 0;" ng-bind="score + '/' + questions.length"></h1>
+        <h4>CORRECT ANSWERS</h4>
         <div class="">
-          <a ng-href="#/app/subjects/{{ courseName }}/{{ subjectName }}">continue</a>
-          <a href="javasctip:void(0)" on-tap="showFullDetails()">see full details</a>
+          <a class="button button-balanced button-block" ng-href="#/app/subjects/{{ courseName }}/{{ subjectName }}">continue</a>
+          <a class="button button-balanced button-block" href="javasctip:void(0)" on-tap="showFullDetails()">see full details</a>
         </div>
     </div>
-    <div class=""
+    <div class="padding"
       ng-if="fullDetailsMode === true">
-      <ul class="list">
-        <li ng-repeat="question in questions" class="item">
+        <div ng-repeat="question in questions" class="card padding">
           Question: {{ question.question }}<br>
           Correct answer: {{ question.answer }} - {{ question.choices[question.answer] }}<br>
           Your answer: {{ question.userAnswer }} - {{ question.choices[question.userAnswer] }}
-        </li>
-      </ul>
+        </div>
     </div>
   </ion-content>
 </ion-view>

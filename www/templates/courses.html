@@ -1,8 +1,11 @@
 <ion-view view-title="Courses">
-  <ion-content>
+  <ion-content class="courses-list menu-content">
     <ion-list>
-      <ion-item ng-repeat="course in courses" href="#/app/subjects/{{course.acronym}}">
-        {{ course.name }}
+      <ion-item class="h-25 d-table w-100" ng-repeat="course in courses"
+        ng-style="{'background-image': 'url(img/{{course.acronym}}.jpg)'}"
+        href="#/app/subjects/{{course.acronym}}">
+        <div class="course-acronym" ng-bind="course.acronym"></div>
+        <small class="d-block" ng-bind="course.name"></small>
       </ion-item>
     </ion-list>
   </ion-content>

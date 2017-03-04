@@ -1,0 +1,60 @@
+.list-subjects {
+  & .list-subjects__item {
+    position: relative;
+    color: $balanced;
+
+    &:nth-child(odd) {
+      border-left: 10px solid #7f8c97;
+    }
+    &:nth-child(even) {
+      border-left: 10px solid $balanced;
+    }
+  }
+}
+
+.item-content {
+  color: $balanced !important;
+}
+
+.bar-stable .title,
+.bar-stable .button {
+  color: #fff !important;
+}
+
+.courses-list {
+  .scroll,
+  .list {
+    height: 100%;
+  }
+
+  a.item-content {
+    width: 100%;
+    display: table-cell;
+    vertical-align: middle;
+    word-break: break-word;
+    white-space: pre-line;
+    text-align: center;
+    padding: 20px 10px 0;
+    background-color: transparent;
+    color: #fff !important;
+
+    & .course-acronym {
+      margin-top: 4px;
+      margin-bottom: 5px;
+      font-size: 80px;
+    }
+  }
+}
+
+.item .item-content.activated,
+.item .item-content.activated.item-complex>.item-content,
+.item .item-content.active,
+.item .item-content.active.item-complex>.item-content,
+.item-complex.activated .item-content,
+.item-complex.activated .item-content.item-complex>.item-content,
+.item-complex.active .item-content,
+.item-complex.active .item-content.item-complex>.item-content,
+.item.activated, .item.activated.item-complex>.item-content,
+.item.active, .item.active.item-complex>.item-content {
+  color: $balanced !important;
+}

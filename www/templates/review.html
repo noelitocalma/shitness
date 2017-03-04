@@ -1,26 +1,40 @@
 <ion-view title="Review">
-  <ion-content>
+  <ion-content class="menu-content">
     <div class=""
       ng-if="reviewInProgress === true">
-        {{ questions[questionNumber].question }}
+        <div class="card">
+          <div class="item item-divider">Question</div>
+          <div class="item item-text-wrap"
+            ng-bind="questions[questionNumber].question"></div>
+        </div>
         <div class=""
           ng-if="showAnswer === true">
-           Answer: {{ !questions[questionNumber].hasOwnProperty('choices') ? questions[questionNumber].answer : questions[questionNumber].choices[questions[questionNumber].answer] }}
+          <div class="card">
+            <div class="item item-divider">Answer</div>
+            <div class="item item-text-wrap"
+              ng-bind="!questions[questionNumber].hasOwnProperty('choices')
+                ? questions[questionNumber].answer
+                : questions[questionNumber].choices[questions[questionNumber].answer]"></div>
+          </div>
         </div>
         <br>
-        <button class="button button-outline button-positive"
-          ng-click="setShowAnswer(true)">
-            Show Answer
-        </button>
-        <button class="button button-outline button-positive"
-          ng-click="nextQuestion()">
-            Next Question
-        </button>
+        <div class="padding">
+          <button class="button button-balanced button-block"
+            ng-click="setShowAnswer(true)" ng-if="showAnswer !== true">
+              Show Answer
+          </button>
+          <button class="button button-balanced button-block"
+            ng-click="nextQuestion()">
+              Next Question
+          </button>
+        </div>
     </div>
     <div class=""
       ng-if="reviewInProgress === false">
-        All done
-        <a ng-href="#/app/subjects/{{ courseName }}/{{ subjectName }}">go back</a>
+        <div class="card padding">
+          <h2 class="title balanced text-center"><i class="icon ion-android-done"></i> All done</h2>
+          <a class="button button-balanced icon-left ion-chevron-left button-block" ng-href="#/app/subjects/{{ courseName }}/{{ subjectName }}">go back</a>
+        </div>
     </div>
   </ion-content>
 </ion-view>
