@@ -21,11 +21,11 @@
         <div class="padding">
           <button class="button button-balanced button-block"
             ng-click="setShowAnswer(true)" ng-if="showAnswer !== true">
-              Show Answer
+              <i class="ion-eye"></i> Show Answer
           </button>
           <button class="button button-balanced button-block"
             ng-click="nextQuestion()">
-              Next Question
+              <i class="ion-arrow-right-c"></i> Next Question
           </button>
         </div>
     </div>
@@ -33,7 +33,7 @@
       ng-if="reviewInProgress === false">
         <div class="card padding">
           <h2 class="title balanced text-center"><i class="icon ion-android-done"></i> All done</h2>
-          <a class="button button-balanced icon-left ion-chevron-left button-block" ng-href="#/app/subjects/{{ courseName }}/{{ subjectName }}">go back</a>
+          <a class="button button-balanced icon-left ion-chevron-left button-block" ng-href="#/app/subjects/{{ courseName }}/{{ subjectName }}">Go Back</a>
         </div>
     </div>
   </ion-content>

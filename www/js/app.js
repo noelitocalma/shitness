@@ -519,6 +519,16 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ngStorage'])
     }
   })
 
+  .state('app.editsets', {
+    url: '/mysets/:id',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/create-set.html',
+        controller: 'CreateSetCtrl'
+      }
+    }
+  })
+
   .state('app.subjects', {
     url: '/subjects/:courseName',
     views: {

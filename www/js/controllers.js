@@ -38,14 +38,21 @@ angular.module('starter.controllers', [])
   $scope.courses = $localStorage.courses
 })
 
-.controller('CreateSetCtrl', function($scope, $localStorage, $ionicPopup) {
+.controller('CreateSetCtrl', function($scope, $state, $stateParams, $localStorage, $ionicPopup) {
   var choiceKeys = 'abcdefghijklmnopqrstuvwxyz'
+  $scope.editMode = $state.current.name === 'app.editsets'
+  let indexOfSet = !$scope.editMode ? null : $localStorage.customSets.map((v) => v.id)
+    .indexOf(parseInt($stateParams.id))
 
-  $scope.set = {
-    name: '',
-    acronym: '',
-    logo: '',
-    questions: []
+  if (!$scope.editMode) {
+    $scope.set = {
+      name: '',
+      acronym: '',
+      logo: '',
+      questions: []
+    }
+  } else {
+    $scope.set = angular.copy($localStorage.customSets[indexOfSet])
   }
 
   $scope.question = {
@@ -90,13 +97,25 @@ angular.module('starter.controllers', [])
       $scope.question.choices.forEach(function(choice, i) {
         choices[choiceKeys.charAt(i)] = choice
       })
+      choices[choiceKeys.charAt($scope.question.choices.length)] = $scope.question.answer
+      $scope.question.answer = choiceKeys.charAt($scope.question.choices.length)
       $scope.question.choices = choices
     }
 
     delete $scope.question.newChoice
     delete $scope.question.answerType
 
-    $scope.set.questions.push($scope.question)
+    if (!$scope.editQuestionMode) {
+      $scope.set.questions.push($scope.question)
+    } else {
+      $scope.set.questions[$scope.editCurrentQuestionIndex] = $scope.question
+      $ionicPopup.alert({
+        title: 'Question Updated',
+        cssClass: 'popup-success',
+        template: 'Question successfully updated',
+        okType: 'button-balanced'
+      });
+    }
 
     $scope.question = {
       newChoice: '',
@@ -105,12 +124,25 @@ angular.module('starter.controllers', [])
       choices: [],
       answer: ''
     }
+    $scope.editQuestionMode = false
   }
 
   $scope.deleteQuestion = function (question) {
     $scope.set.questions.splice(
       $scope.set.questions.indexOf(question), 1
     )
+    $ionicPopup.alert({
+      title: 'Question Deleted',
+      cssClass: 'popup-success',
+      template: 'Question successfully deleted',
+      okType: 'button-balanced'
+    });
+  }
+
+  $scope.editQuestion = function (question) {
+    $scope.editQuestionMode = true
+    $scope.question = angular.copy(question)
+    $scope.editCurrentQuestionIndex = $scope.set.questions.indexOf(question)
   }
 
   $scope.addSet = function() {
@@ -127,32 +159,47 @@ angular.module('starter.controllers', [])
       acronym += word.charAt(0)
     })
 
-    $scope.set.acronym = acronym.toUpperCase()
-    $scope.set.id = Math.round(Math.random() * 100000)
-    $localStorage.customSets.push(angular.copy($scope.set))
-
-    $scope.set = {
-      name: '',
-      acronym: '',
-      logo: '',
-      questions: []
-    }
-
-    var onSetCreatedPopup = $ionicPopup.confirm({
-      title: 'Set Created',
-      cssClass: 'popup-success',
-      template: 'Do you want to create another?',
-      cancelText: 'No',
-      cancelType: 'button-calm',
-      okText: 'Yes',
-      okType: 'button-balanced'
-    });
-
-    onSetCreatedPopup.then(function(res) {
-      if(!res) {
-        window.location.href = window.location.origin + '#/app/mysets'
+    if (!$scope.editMode) {
+      $scope.set.acronym = acronym.toUpperCase()
+      $scope.set.id = Math.round(Math.random() * 100000)
+      $localStorage.customSets.push(angular.copy($scope.set))
+      $scope.set = {
+        name: '',
+        acronym: '',
+        logo: '',
+        questions: []
       }
-    });
+
+      var onSetCreatedPopup = $ionicPopup.confirm({
+        title: 'Set Created',
+        cssClass: 'popup-success',
+        template: 'Do you want to create another?',
+        cancelText: 'No',
+        cancelType: 'button-calm',
+        okText: 'Yes',
+        okType: 'button-balanced'
+      });
+
+      onSetCreatedPopup.then(function(res) {
+        if(!res) $state.go('app.mysets')
+      });
+    } else {
+      $localStorage.customSets[indexOfSet] = angular.copy($scope.set)
+      var alertPopup = $ionicPopup.alert({
+        title: 'Set Updated',
+        cssClass: 'popup-success',
+        template: 'Set successfully updated.',
+        okType: 'button-balanced'
+      });
+      alertPopup.then(function(res) {
+        if(res) {
+          $state.go('app.subject', {
+            courseName: 'custom',
+            subjectName: $scope.set.id
+          }, { reload: true })
+        }
+      });
+    };
   }
 
   $scope.showValidationErrorAlert = function(content) {
@@ -165,11 +212,14 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('MySetsCtrl', function($scope, $localStorage) {
+.controller('MySetsCtrl', function($scope, $state, $localStorage) {
   $scope.sets = $localStorage.customSets
 
-  $scope.gotoLink = function (link) {
-    window.location.href = window.location.origin + link
+  $scope.gotoLink = function (course, subject) {
+    $state.go('app.subject', {
+      courseName: course,
+      subjectName: subject
+    })
   }
 })
 
@@ -179,7 +229,7 @@ angular.module('starter.controllers', [])
   $scope.subjects = getCourse(courses, $scope.courseName).subjects || [];
 })
 
-.controller('SubjectCtrl', function($scope, $stateParams, $localStorage, $ionicPopup) {
+.controller('SubjectCtrl', function($scope, $state, $stateParams, $localStorage, $ionicPopup) {
   var courses = $stateParams.courseName !== 'custom'
     ? $localStorage.courses : $localStorage.customSets
 
@@ -197,6 +247,10 @@ angular.module('starter.controllers', [])
     $scope.customId = $stateParams.subjectName
   }
 
+  $scope.editSets = function (id) {
+    $state.go('app.editsets', { id: id })
+  }
+
   $scope.deleteSets = function (id) {
     var confirmPopup = $ionicPopup.confirm({
       title: 'Consume Ice Cream',
@@ -212,7 +266,7 @@ angular.module('starter.controllers', [])
         let index = $localStorage.customSets.map((v) => v.id).indexOf(parseInt(id))
         let sets = $localStorage.customSets
         sets.splice(index, 1)
-        window.location.href = window.location.origin + '#/app/mysets'
+        $state.go('app.mysets')
       }
     });
   }

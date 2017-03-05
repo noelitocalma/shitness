@@ -1,10 +1,18 @@
 <ion-view view-title="Subject">
   <ion-content class="menu-content">
     <div class="padding">
+      <div>
+        <button class="button button-balanced button-small w-49"
+          ng-if="courseName === 'custom'" ng-click="editSets(customId)">
+          <i class="icon ion-edit"></i> Edit
+        </button>
+        <button class="button button-assertive button-small w-49"
+          ng-if="courseName === 'custom'" ng-click="deleteSets(customId)">
+          <i class="icon ion-android-delete"></i> Delete
+        </button>
+      </div>
       <h3 class="title text-center">
         <span ng-bind="subjectName"></span>
-        <i class="icon ion-android-delete assertive pull-right"
-          ng-if="customId" ng-click="deleteSets(customId)"></i>
       </h3>
       <div class="row text-center">
         <a class="col" ng-href="#/app/review/{{ courseName }}/{{ customId || subjectName }}">
