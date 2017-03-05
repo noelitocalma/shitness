@@ -128,21 +128,76 @@ angular.module('starter.controllers', [])
   }
 
   $scope.deleteQuestion = function (question) {
-    $scope.set.questions.splice(
-      $scope.set.questions.indexOf(question), 1
-    )
-    $ionicPopup.alert({
-      title: 'Question Deleted',
-      cssClass: 'popup-success',
-      template: 'Question successfully deleted',
-      okType: 'button-balanced'
+    var confirmPopup = $ionicPopup.confirm({
+      title: 'Delete Question',
+      template: 'Are you sure you want to delete this question?',
+      cssClass: 'popup-assertive',
+      cancelType: 'button-calm',
+      cancelText: 'No',
+      okType: 'button-assertive',
+      okText: 'Yes'
     });
+
+    confirmPopup.then(function(res) {
+      if(res) {
+        $scope.set.questions.splice(
+          $scope.set.questions.indexOf(question), 1
+        )
+        $ionicPopup.alert({
+          title: 'Question Deleted',
+          cssClass: 'popup-success',
+          template: 'Question successfully deleted',
+          okType: 'button-balanced'
+        });
+      }
+    });
+  }
+
+  $scope.cancelEditQuestion = function () {
+    $scope.editQuestionMode = false
+    $scope.question = {
+      newChoice: '',
+      answerType: 'text',
+      question: '',
+      choices: [],
+      answer: ''
+    }
   }
 
   $scope.editQuestion = function (question) {
     $scope.editQuestionMode = true
     $scope.question = angular.copy(question)
     $scope.editCurrentQuestionIndex = $scope.set.questions.indexOf(question)
+
+    if ($scope.question.hasOwnProperty('choices')) {
+      let answerKey = angular.copy($scope.question.answer)
+      let choices = angular.copy($scope.question.choices)
+      $scope.question.answerType = 'choices'
+      $scope.question.answer = choices[answerKey]
+      delete choices[answerKey]
+      $scope.question.choices = []
+      Object.keys(choices).forEach(function(key) {
+        $scope.question.choices.push(choices[key])
+      })
+    }
+  }
+
+  $scope.cancelEditSet = function () {
+    var confirmPopup = $ionicPopup.confirm({
+      title: 'Cancel Edit',
+      template: 'Are you sure you want to cancel editing this set?',
+      cssClass: 'popup-assertive',
+      cancelType: 'button-calm',
+      cancelText: 'No',
+      okType: 'button-assertive',
+      okText: 'Yes'
+    });
+
+    confirmPopup.then(function(res) {
+      if(res) {
+        $state.go('app.mysets')
+      }
+    });
   }
 
   $scope.addSet = function() {
@@ -253,7 +308,7 @@ angular.module('starter.controllers', [])
 
   $scope.deleteSets = function (id) {
     var confirmPopup = $ionicPopup.confirm({
-      title: 'Consume Ice Cream',
+      title: 'Delete Set',
       template: 'Are you sure you want to delete this set?',
       cssClass: 'popup-assertive',
       cancelType: 'button-calm',
@@ -272,7 +327,11 @@ angular.module('starter.controllers', [])
   }
 })
 
-.controller('ReviewCtrl', function($scope, $stateParams, $localStorage) {
+.controller('ReviewCtrl', function($scope, $ionicPopup, $stateParams, $localStorage) {
+  $scope.calcData = {
+    result: 0,
+    func: ''
+  };
   var courses = $localStorage.courses
   var courseName = $scope.courseName = $stateParams.courseName
   var subjectName = $scope.subjectName = $stateParams.subjectName
@@ -298,9 +357,17 @@ angular.module('starter.controllers', [])
 
     $scope.setShowAnswer(false)
   }
+
+  $scope.openCalculator = function () {
+    openCalculator($ionicPopup)
+  }
 })
 
-.controller('QuizCtrl', function($scope, $stateParams, $interval, $localStorage) {
+.controller('QuizCtrl', function($scope, $ionicPopup, $stateParams, $interval, $localStorage) {
+  $scope.calcData = {
+    result: 0,
+    func: ''
+  };
   var courses = $localStorage.courses
   var courseName = $scope.courseName = $stateParams.courseName
   var subjectName = $scope.subjectName = $stateParams.subjectName
@@ -346,6 +413,10 @@ angular.module('starter.controllers', [])
   $scope.endQuiz = function() {
     $scope.quizInProgress = false
     $interval.cancel(timer);
+  }
+
+  $scope.openCalculator = function () {
+    openCalculator($ionicPopup)
   }
 
   $scope.showFullDetails = function() {
@@ -400,4 +471,14 @@ function shuffle(array) {
   }
 
   return array;
+}
+
+function openCalculator ($ionicPopup) {
+  var alertPopup = $ionicPopup.alert({
+    title: 'Calculator',
+    cssClass: 'popup-success popup-calc',
+    template: '<div ez-calc="calcDatadata"></div>',
+    okText: 'Close',
+    okType: 'button-balanced'
+  });
 }

@@ -10266,3 +10266,6 @@ a {
   background-color: #003439; }
   .popup-success .popup-head .popup-title {
     color: #fff !important; }
+
+.popup-calc .popup-body {
+  padding: 0; }
