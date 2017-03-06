@@ -24,11 +24,11 @@
                   ng-repeat="(key, value) in questions[questionNumber].choices"
                   ng-model="choice.key"
                   ng-value="key">{{ value }}</ion-radio>
-                <button class="button button-block button-balanced"
-                  ng-click="nextQuestion()">
-                    <i class="ion-arrow-right-c"></i> Next
-                </button>
               </div>
+              <button class="button button-block button-balanced"
+                ng-click="nextQuestion()">
+                  <i class="ion-arrow-right-c"></i> Next
+              </button>
             </div>
         </div>
     </div>

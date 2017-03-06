@@ -64,13 +64,29 @@ angular.module('starter.controllers', [])
   }
 
   $scope.addChoice = function() {
+    // let isAnswerExists = 0
     if (!$scope.question.newChoice) {
       $scope.showValidationErrorAlert('Choice can\'t be empty')
       return
     }
 
-    $scope.question.choices.push($scope.question.newChoice)
-    $scope.question.newChoice = ''
+    // $scope.question.choices.forEach(function (value) {
+    //   if (value.toLowerCase() === $scope.question.answer.toLowerCase())
+    //     isAnswerExists += 1
+    // })
+    //
+    // if (isAnswerExists > 0) {
+    //   $ionicPopup.alert({
+    //     title: 'Validation Error',
+    //     cssClass: 'popup-assertive',
+    //     template: 'You don\'t need to add the answer on the choices. It will automatically be added.',
+    //     okType: 'button-assertive'
+    //   });
+    //
+    // } else {
+      $scope.question.choices.push($scope.question.newChoice)
+      $scope.question.newChoice = ''
+    // }
   }
 
   $scope.deleteChoice = function (choice) {
