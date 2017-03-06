@@ -1,59 +1,9 @@
 <ion-view view-title="Help">
   <ion-content scroll="false" class="menu-content">
     <ion-slides options="slideOptions" slider="data.slider">
-      <ion-slide-page>
+      <ion-slide-page ng-repeat="i in [].constructor(11) track by $index">
         <div class="box">
-          <img src="img/help1.gif">
-        </div>
-      </ion-slide-page>
-      <ion-slide-page>
-        <div class="box">
-          <img src="img/help2.gif">
-        </div>
-      </ion-slide-page>
-      <ion-slide-page>
-        <div class="box">
-          <img src="img/help3.gif">
-        </div>
-      </ion-slide-page>
-      <ion-slide-page>
-        <div class="box">
-          <img src="img/help4.gif">
-        </div>
-      </ion-slide-page>
-      <ion-slide-page>
-        <div class="box">
-          <img src="img/help5.gif">
-        </div>
-      </ion-slide-page>
-      <ion-slide-page>
-        <div class="box">
-          <img src="img/help6.gif">
-        </div>
-      </ion-slide-page>
-      <ion-slide-page>
-        <div class="box">
-          <img src="img/help7.gif">
-        </div>
-      </ion-slide-page>
-      <ion-slide-page>
-        <div class="box">
-          <img src="img/help8.gif">
-        </div>
-      </ion-slide-page>
-      <ion-slide-page>
-        <div class="box">
-          <img src="img/help9.gif">
-        </div>
-      </ion-slide-page>
-      <ion-slide-page>
-        <div class="box">
-          <img src="img/help10.gif">
-        </div>
-      </ion-slide-page>
-      <ion-slide-page>
-        <div class="box">
-          <img src="img/help11.gif">
+          <img ng-src="img/help{{$index + 1}}.gif">
         </div>
       </ion-slide-page>
     </ion-slides>

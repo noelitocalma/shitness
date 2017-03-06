@@ -73,7 +73,8 @@ angular.module('starter.controllers', [])
       return
     }
 
-    if ($scope.question.choices.indexOf($scope.question.newChoice) !== -1) {
+    if ($scope.question.choices.map((v) => v.toLowerCase())
+      .indexOf($scope.question.newChoice.toLowerCase()) !== -1) {
       $scope.showValidationErrorAlert($scope.question.newChoice + ' is already added')
       return
     }
@@ -191,7 +192,6 @@ angular.module('starter.controllers', [])
       let choices = angular.copy($scope.question.choices)
       $scope.question.answerType = 'choices'
       $scope.question.answer = choices[answerKey]
-      delete choices[answerKey]
       $scope.question.choices = []
       Object.keys(choices).forEach(function(key) {
         $scope.question.choices.push(choices[key])
