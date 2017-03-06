@@ -32,6 +32,10 @@ angular.module('starter.controllers', [])
       $scope.closeLogin();
     }, 1000);
   };
+
+  $scope.slideOptions = {
+    loop: true
+  }
 })
 
 .controller('CoursesCtrl', function($scope, $localStorage) {
@@ -69,6 +73,11 @@ angular.module('starter.controllers', [])
       return
     }
 
+    if ($scope.question.choices.indexOf($scope.question.newChoice) !== -1) {
+      $scope.showValidationErrorAlert($scope.question.newChoice + ' is already added')
+      return
+    }
+
     $scope.question.choices.push($scope.question.newChoice)
     $scope.question.newChoice = ''
   }
@@ -80,7 +89,7 @@ angular.module('starter.controllers', [])
   }
 
   $scope.addQuestion = function() {
-    if (!$scope.question.answer || !$scope.question) {
+    if (!$scope.question.answer || !$scope.question.question) {
       let content = !$scope.question.question
         ? 'Question can\'t be empty' : 'Answer can\'t be empty'
       $scope.showValidationErrorAlert(content)
@@ -93,12 +102,20 @@ angular.module('starter.controllers', [])
         $scope.showValidationErrorAlert('Add atleast 2 choices')
         return
       }
+
+      var answer = $scope.question.choices.indexOf($scope.question.answer)
       var choices = {}
+
+      if (answer === -1) {
+        $scope.showValidationErrorAlert('Answer can\'t be empty')
+        return
+      }
+
       $scope.question.choices.forEach(function(choice, i) {
         choices[choiceKeys.charAt(i)] = choice
       })
-      choices[choiceKeys.charAt($scope.question.choices.length)] = $scope.question.answer
-      $scope.question.answer = choiceKeys.charAt($scope.question.choices.length)
+
+      $scope.question.answer = choiceKeys.charAt($scope.question.choices.indexOf($scope.question.answer))
       $scope.question.choices = choices
     }
 

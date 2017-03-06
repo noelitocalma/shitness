@@ -17,12 +17,22 @@
         <option value="choices">Choices</option>
       </select>
     </label>
-    <label class="item item-input">
+
+    <label class="item item-input"
+      ng-if="question.answerType === 'text'">
       <input type="text" placeholder="Answer" ng-model="question.answer">
     </label>
 
     <div class=""
       ng-if="question.answerType === 'choices'">
+      <label class="item item-input item-select">
+        <div class="input-label">
+          Answer
+        </div>
+        <select ng-model="question.answer">
+          <option value="{{ choice }}" ng-repeat="choice in question.choices">{{ choice }}</option>
+        </select>
+      </label>
       <div class="row p-0">
         <div class="col col-75 p-0">
           <label class="item item-input">
