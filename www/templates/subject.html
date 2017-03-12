@@ -1,13 +1,17 @@
 <ion-view cache-view="false" view-title="Subject">
   <ion-content class="menu-content">
     <div class="padding">
-      <div>
-        <button class="button button-balanced button-small w-49"
-          ng-if="courseName === 'custom'" ng-click="editSets(customId)">
+      <div class="text-center" ng-if="type === 'custom'">
+        <button class="button button-positive button-small w-30"
+          ng-click="uploadSets(customId)">
+          <i class="icon ion-android-upload"></i> Upload
+        </button>
+        <button class="button button-balanced button-small w-30"
+          ng-click="editSets(customId)">
           <i class="icon ion-edit"></i> Edit
         </button>
-        <button class="button button-assertive button-small w-49"
-          ng-if="courseName === 'custom'" ng-click="deleteSets(customId)">
+        <button class="button button-assertive button-small w-30"
+          ng-click="deleteSets(customId)">
           <i class="icon ion-android-delete"></i> Delete
         </button>
       </div>
@@ -15,11 +19,11 @@
         <span ng-bind="subjectName"></span>
       </h3>
       <div class="row text-center">
-        <a class="col" ng-href="#/app/review/{{ courseName }}/{{ customId || subjectName }}">
+        <a class="col" ng-href="#/app/review/{{type}}/{{ customId || subjectName }}">
           <div class="balanced padding-bottom">Review</div>
           <img class="img-fluid" src="img/review.png" alt="">
         </a>
-        <a class="col" ng-href="#/app/quiz/{{ courseName }}/{{ customId || subjectName }}">
+        <a class="col" ng-href="#/app/quiz/{{type}}/{{ customId || subjectName }}">
           <div class="balanced padding-bottom">Quiz</div>
           <img class="img-fluid" src="img/exam.png" alt="">
         </a>
@@ -32,7 +36,6 @@
           <b ng-bind="question.hasOwnProperty('choices') && question.choices
             ? question.choices[question.answer] : question.answer"></b>
         </div>
-
       </div>
     </div>
   </ion-content>

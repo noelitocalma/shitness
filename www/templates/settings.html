@@ -1,0 +1,18 @@
+<ion-view cache-view="false" view-title="Settings">
+  <ion-content class="menu-content padding">
+    <div class="item item-divider">Username</div>
+    <label class="item item-input">
+      <input type="text" placeholder="Username" ng-click="informUsername()"
+        ng-readonly="isUsernameSet" ng-maxlength="100" ng-model="username">
+    </label>
+    <small class="assertive">You can only set your username once.</small>
+    <div class="item item-divider mt-3">Timer</div>
+    <label class="item item-input">
+      <input type="number" placeholder="Timer (seconds)" ng-max="90" ng-min="10" ng-model="timer">
+    </label>
+
+    <button class="button button-balanced button-block" ng-click="saveSettings(username, timer)">
+      Save Settings
+    </button>
+  </ion-content>
+</ion-view>

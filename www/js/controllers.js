@@ -1,6 +1,6 @@
 angular.module('starter.controllers', [])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
+.controller('AppCtrl', function($scope, $ionicModal, $timeout, $localStorage) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -36,17 +36,15 @@ angular.module('starter.controllers', [])
   $scope.slideOptions = {
     loop: true
   }
-})
 
-.controller('CoursesCtrl', function($scope, $localStorage) {
-  $scope.courses = $localStorage.courses
+  $scope.username = $localStorage.iMemoUsername
 })
 
 .controller('CreateSetCtrl', function($scope, $state, $stateParams, $localStorage, $ionicPopup) {
   var choiceKeys = 'abcdefghijklmnopqrstuvwxyz'
   $scope.editMode = $state.current.name === 'app.editsets'
-  let indexOfSet = !$scope.editMode ? null : $localStorage.customSets.map((v) => v.id)
-    .indexOf(parseInt($stateParams.id))
+  let id = convertIndexOf($stateParams.id)
+  let indexOfSet = !$scope.editMode ? null : $localStorage.customSets.map((v) => v.id).indexOf(id)
 
   if (!$scope.editMode) {
     $scope.set = {
@@ -233,7 +231,7 @@ angular.module('starter.controllers', [])
 
     if (!$scope.editMode) {
       $scope.set.acronym = acronym.toUpperCase()
-      $scope.set.id = Math.round(Math.random() * 100000)
+      $scope.set.id = new Date().getTime()
       $localStorage.customSets.push(angular.copy($scope.set))
       $scope.set = {
         name: '',
@@ -266,7 +264,7 @@ angular.module('starter.controllers', [])
       alertPopup.then(function(res) {
         if(res) {
           $state.go('app.subject', {
-            courseName: 'custom',
+            type: 'custom',
             subjectName: $scope.set.id
           }, { reload: true })
         }
@@ -284,39 +282,222 @@ angular.module('starter.controllers', [])
   };
 })
 
+.controller('SettingsCtrl', function($scope, $state, $localStorage, $ionicPopup) {
+  $scope.isUsernameSet = $localStorage.iMemoUsername !== undefined
+  $scope.username = $localStorage.iMemoUsername
+    ? angular.copy($localStorage.iMemoUsername) : ''
+  $scope.timer = $localStorage.iMemoTimer
+   ? angular.copy($localStorage.iMemoTimer) : ''
+
+  $scope.informUsername = function () {
+    if (!$scope.isUsernameSet) return
+    var alertPopup = $ionicPopup.alert({
+      title: 'Username',
+      cssClass: 'popup-assertive',
+      template: 'Username cannot be changed.',
+      okType: 'button-assertive'
+    });
+  }
+
+  $scope.saveSettings = function (username, timer) {
+    if (!username) {
+      var alertPopup = $ionicPopup.alert({
+        title: 'Validation Error',
+        cssClass: 'popup-assertive',
+        template: 'Username can\'t be empty',
+        okType: 'button-assertive'
+      });
+      return
+    }
+
+    if (!timer) {
+      var alertPopup = $ionicPopup.alert({
+        title: 'Default Values',
+        cssClass: 'popup-assertive',
+        template: 'No value for timer. Default value of 20 seconds will be used.',
+        okType: 'button-assertive'
+      });
+    }
+
+    if (timer && (timer < 10 || timer > 90)) {
+      var alertPopup = $ionicPopup.alert({
+        title: 'Validation Error',
+        cssClass: 'popup-assertive',
+        template: 'Allowed values for the timer is 10 to 90 seconds',
+        okType: 'button-assertive'
+      });
+      return
+    }
+
+    var alertPopup = $ionicPopup.alert({
+      title: 'Settings Saved',
+      cssClass: 'popup-success',
+      template: 'Your settings was updated',
+      okType: 'button-balanced'
+    });
+
+    $scope.isUsernameSet = true
+    $localStorage.iMemoUsername = username
+    $localStorage.iMemoTimer = timer
+  }
+})
+
 .controller('MySetsCtrl', function($scope, $state, $localStorage) {
   $scope.sets = $localStorage.customSets
 
-  $scope.gotoLink = function (course, subject) {
+  $scope.gotoLink = function (type, subject) {
     $state.go('app.subject', {
-      courseName: course,
-      subjectName: subject
+      type: type,
+      subjectName: subject,
     })
   }
 })
 
-.controller('SubjectsCtrl', function($scope, $stateParams, $localStorage) {
-  var courses = $localStorage.courses
-  $scope.courseName = $stateParams.courseName
-  $scope.subjects = getCourse(courses, $scope.courseName).subjects || [];
+.controller('DownloadSetsCtrl', function($scope, $state, $localStorage, $ionicModal, $ionicPopup, Sets) {
+  // gets all uploaded sets
+  Sets.query(function (data) {
+    $scope.sets = data
+  })
+
+  $scope.uploadedByUser = function (set) {
+    if ($localStorage.customSets.length <= 0) return false
+    let index = $localStorage.customSets.map((s) => s.id).indexOf(set.origId)
+    return index > -1 ? true : false
+  }
+
+  $scope.downloadSet = function (id, origId) {
+    let index = $localStorage.customSets.map((s) => s.id).indexOf(origId)
+    let isUploadedByUser = $scope.uploadedByUser($scope.sets[$scope.sets.map((s) => s.origId).indexOf(origId)])
+
+    if (isUploadedByUser) {
+      $ionicPopup.alert({
+        title: 'Download Error',
+        cssClass: 'popup-assertive',
+        template: 'You uploaded this set.',
+        okType: 'button-assertive'
+      }).then(function () {
+        $scope.closeModal()
+      })
+    } else {
+      if (index > -1) {
+        $ionicPopup.alert({
+          title: 'Download Confirm',
+          cssClass: 'popup-assertive',
+          template: 'You already have this set.',
+          okType: 'button-assertive',
+          okText: 'Close'
+        }).then(function (res) {
+          if (res) $scope.closeModal()
+        })
+      } else {
+        Sets.get({id: id}, function (data) {
+          let sets = $localStorage.customSets
+          sets.push(JSON.parse(JSON.stringify(data)))
+          $ionicPopup.confirm({
+            title: 'Download Successful',
+            cssClass: 'popup-success',
+            template: 'Set downloaded successfully. Download more?',
+            okType: 'button-balanced',
+            okText: 'Yes',
+            cancelText: 'No',
+            cancelType: 'button-calm'
+          }).then(function (res) {
+            if (!res) {
+              $scope.closeModal()
+              $state.go('app.mysets')
+            }
+          })
+        })
+      }
+    }
+  }
+
+  $ionicModal.fromTemplateUrl('download-set.html', {
+    scope: $scope,
+    animation: 'slide-in-up'
+  }).then(function(modal) {
+    $scope.modal = modal;
+  });
+
+  $scope.viewSet =  function (set) {
+    $scope.set = set
+    $scope.modal.show();
+  };
+  $scope.closeModal = function() {
+    $scope.modal.hide();
+  };
+  // Cleanup the modal when we're done with it!
+  $scope.$on('$destroy', function() {
+    $scope.modal.remove();
+  });
 })
 
-.controller('SubjectCtrl', function($scope, $state, $stateParams, $localStorage, $ionicPopup) {
-  var courses = $stateParams.courseName !== 'custom'
-    ? $localStorage.courses : $localStorage.customSets
+.controller('SubjectsCtrl', function($scope, $stateParams, $localStorage) {
+  $scope.subjects = $localStorage.subjects
+})
 
-  $scope.courseName = $stateParams.courseName
+.controller('SubjectCtrl', function($scope, $state, $stateParams, $localStorage, $ionicPopup, Sets) {
+  var subjects = $stateParams.type !== 'custom'
+    ? $localStorage.subjects : $localStorage.customSets
+
+  $scope.type = $stateParams.type === 'custom' ? $stateParams.type : 'default'
   $scope.subjectName = getCustomName($localStorage.customSets, $stateParams.subjectName) || $stateParams.subjectName
 
-  if ($stateParams.courseName !== 'custom') {
-    $scope.questions = getQuestions(courses, $scope.courseName, $scope.subjectName)
+  if ($stateParams.type !== 'custom') {
+    $scope.questions = getQuestions(subjects, $scope.subjectName)
   } else {
-    let sets = $localStorage.customSets[$localStorage.customSets.map((v) => v.id ).indexOf(parseInt($stateParams.subjectName))]
+    let subjectName = convertIndexOf($stateParams.subjectName)
+    let sets = $localStorage.customSets[$localStorage.customSets.map((v) => v.id ).indexOf(subjectName)]
      $scope.questions = sets.questions
   }
 
   if ($scope.subjectName !== $stateParams.subjecName) {
     $scope.customId = $stateParams.subjectName
+  }
+
+  $scope.uploadSets = function (id) {
+    let _id = convertIndexOf(id)
+    let index = $localStorage.customSets.map((v) => v.id).indexOf(_id)
+    let set = angular.copy($localStorage.customSets[index])
+
+    Sets.query(function (data) {
+      if (!data) return
+      $scope.uploadedSets = data
+
+      if ($scope.uploadedSets.map((s) => s.origId).indexOf(_id) === -1 ) {
+        upload(set)
+      } else {
+        $ionicPopup.confirm({
+          title: 'Upload Error',
+          cssClass: 'popup-assertive',
+          template: 'You already uploaded this set. Do you want to upload it again?',
+          okType: 'button-balanced',
+          okText: 'Yes',
+          cancelType: 'button-assertive',
+          cancelText: 'No'
+        }).then(function (res) {
+          if (res) {
+            upload(set)
+          }
+        })
+      }
+    })
+
+    function upload (set) {
+      set.author = $localStorage.iMemoUsername
+      set.origId = set.id
+      set.uploadedDate = new Date()
+      delete set.id
+
+      Sets.save(set, function (data) {
+        $ionicPopup.alert({
+          title: 'Upload Successfull',
+          cssClass: 'popup-success',
+          template: 'Your set was uploaded successfully.',
+          okType: 'button-balanced'
+        });
+      })
+    }
   }
 
   $scope.editSets = function (id) {
@@ -349,12 +530,12 @@ angular.module('starter.controllers', [])
     result: 0,
     func: ''
   };
-  var courses = $localStorage.courses
-  var courseName = $scope.courseName = $stateParams.courseName
+  $scope.type = $stateParams.type
+  var subjects = $localStorage.subjects
   var subjectName = $scope.subjectName = $stateParams.subjectName
 
-  if ($stateParams.courseName !== 'custom') {
-    $scope.questions = shuffle(getQuestions(courses, courseName, subjectName))
+  if ($stateParams.type !== 'custom') {
+    $scope.questions = shuffle(getQuestions(subjects, subjectName))
   } else {
     $scope.questions = shuffle(getCustomQuestions($localStorage.customSets, $stateParams.subjectName))
   }
@@ -385,12 +566,12 @@ angular.module('starter.controllers', [])
     result: 0,
     func: ''
   };
-  var courses = $localStorage.courses
-  var courseName = $scope.courseName = $stateParams.courseName
+  $scope.type = $stateParams.type
+  var subjects = $localStorage.subjects
   var subjectName = $scope.subjectName = $stateParams.subjectName
 
-  if ($stateParams.courseName !== 'custom') {
-    $scope.questions = shuffle(getQuestions(courses, courseName, subjectName))
+  if ($stateParams.type !== 'custom') {
+    $scope.questions = shuffle(getQuestions(subjects, subjectName))
   } else {
     $scope.questions = shuffle(getCustomQuestions($localStorage.customSets, $stateParams.subjectName))
   }
@@ -399,7 +580,7 @@ angular.module('starter.controllers', [])
   $scope.fullDetailsMode = false
   $scope.questionNumber = 0
   $scope.score = 0
-  $scope.timer = 20
+  $scope.timer = $localStorage.iMemoTimer || 20
   $scope.choice = {
     key: ''
   }
@@ -424,7 +605,7 @@ angular.module('starter.controllers', [])
       ? $scope.questionNumber += 1
       : $scope.endQuiz()
     $scope.choice.key = ''
-    $scope.timer = 21
+    $scope.timer = $localStorage.iMemoTimer || 20
   }
 
   $scope.endQuiz = function() {
@@ -445,15 +626,12 @@ angular.module('starter.controllers', [])
   });
 });
 
-function getCourse(courses, acronym) {
-  return courses.find(function(course) {
-    return course.acronym === acronym;
-  });
+function convertIndexOf (index) {
+  return /^[0-9]+$/.test(index) ? parseInt(index) : index
 }
 
-function getQuestions(courses, courseName, subjectName) {
-  var subject = getCourse(courses, courseName).subjects;
-  var questions = subject.find(function(_subject) {
+function getQuestions(subjects, subjectName) {
+  var questions = subjects.find(function(_subject) {
     return _subject.name === subjectName
   }).questions
 

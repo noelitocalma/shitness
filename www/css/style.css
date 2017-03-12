@@ -10,3 +10,7 @@
 .swiper-slide {
   padding-top: 20px;
 }
+
+input[readonly] {
+  background-color: transparent !important;
+}
