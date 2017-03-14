@@ -6,7 +6,7 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ez.calc', 'ionic', 'starter.controllers', 'starter.services', 'ngStorage', 'ngResource'])
 
-.run(function($rootScope, $ionicPlatform, $localStorage, $ionicPopup, $state) {
+.run(function($rootScope, $timeout, $ionicPlatform, $localStorage, $ionicPopup, $state) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -21,14 +21,25 @@ angular.module('starter', ['ez.calc', 'ionic', 'starter.controllers', 'starter.s
     }
   });
 
-  if (!$localStorage.iMemoUsername && !$localStorage.iMemoTimer) {
-    $ionicPopup.alert({
-      title: 'Settings',
-      template: 'Please configure your profile settings on "My Settings"',
-      cssClass: 'popup-assertive',
-      okType: 'button-assertive'
+  window.$state = $state
+
+  $rootScope.$on('$stateChangeStart', function (event, next) {
+    $timeout(() => {
+      if (!$localStorage.iMemoUsername) {
+        if (next.url !== '/settings' && $state.current.name !== 'app.settings') {
+          event.preventDefault();
+          $state.go('app.settings');
+
+          $ionicPopup.alert({
+            title: 'Welcome',
+            template: 'Please set your nickname',
+            cssClass: 'popup-assertive',
+            okType: 'button-assertive'
+          });
+        }
+      }
     })
-  }
+  });
 
   if (!$localStorage.customSets) {
     $localStorage.customSets = []

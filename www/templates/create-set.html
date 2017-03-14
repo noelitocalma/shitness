@@ -1,9 +1,15 @@
 <ion-view cache-view="false" view-title="{{editMode ? 'Edit Set' : 'Create Set'}}">
   <ion-content class="menu-content padding">
-    <div class="item item-divider">Set Name</div>
-    <label class="item item-input padding-bottom  mb-2">
+    <div class="item item-divider mt-2">Set Name</div>
+    <label class="item item-input padding-bottom  mb-3">
       <input type="text" placeholder="Set Name" ng-model="set.name">
     </label>
+
+    <div class="item item-divider mt-2">Timer</div>
+    <label class="item item-input padding-bottom  mb-3">
+      <input type="number" placeholder="Timer duration (seconds)" ng-model="set.timer">
+    </label>
+
     <div class="item item-divider">New Question</div>
     <label class="item item-input">
       <input type="text" placeholder="Question" ng-model="question.question">
@@ -53,7 +59,7 @@
       </ion-item>
     </ion-list>
 
-    <div class="row p-0">
+    <div class="row p-0 mt-2">
       <div class="col py-0 pl-0" ng-class="{'pr-0': !editQuestionMode}">
         <button class="button button-block button-balanced" type="button"
             ng-click="addQuestion()"><i class="ion-plus-circled"></i> {{editQuestionMode ? 'Save': 'Add Question' }}</button>
