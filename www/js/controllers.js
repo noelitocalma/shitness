@@ -361,6 +361,7 @@ angular.module('starter.controllers', [])
 
 .controller('DownloadSetsCtrl', function($scope, $state, $localStorage, $ionicModal, $ionicPopup, Sets) {
   // gets all uploaded sets
+  $scope.username = $localStorage.iMemoUsername
   Sets.query(function (data) {
     $scope.sets = data
     $scope.sets.forEach((set) => {
@@ -374,6 +375,26 @@ angular.module('starter.controllers', [])
     $state.go('app.subject', {
       type: 'custom',
       subjectName: id
+    })
+  }
+
+  $scope.deleteUploadedSet = function (set) {
+    if (set.author !== $scope.username) return
+    $ionicPopup.confirm({
+      title: 'Delete Set',
+      cssClass: 'popup-assertive',
+      template: 'Do you really want to delete this set? This action can\'t be undone.',
+      okType: 'button-assertive',
+      okText: 'Yes',
+      cancelText: 'No',
+      cancelType: 'button-calm'
+    }).then(function (res) {
+      if (res) {
+        Sets.delete({id: set.id}, function (response) {
+          $scope.sets.splice(set, 1)
+          $scope.closeModal()
+        })
+      }
     })
   }
 

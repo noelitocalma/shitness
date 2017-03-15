@@ -16,21 +16,25 @@
           <h1 class="title">Download Set</h1>
         </div>
         <ion-content class="padding">
-          <div class="card mt-5">
+          <div class="mt-5">
+            <button class="button button-assertive button-small button-block"
+              ng-if="username === set.author" ng-click="deleteUploadedSet(set)">
+              Delete this set.
+            </button>
             <div class="item item-divider">Set Name</div>
-            <div class="item item-text-wrap" ng-bind="set.name"></div>
+            <div class="item item-text-wrap mb-3" ng-bind="set.name"></div>
             <div class="item item-divider">Timer</div>
-            <div class="item item-text-wrap">{{ set.timer || '20' }} seconds</div>
+            <div class="item item-text-wrap mb-3">{{ set.timer || '20' }} seconds</div>
             <div class="item item-divider">Questions</div>
             <div class="item" ng-repeat="question in set.questions">
               <div class="item-text-wrap" ng-bind="question.question"></div> -
               <b ng-bind="question.hasOwnProperty('choices') && question.choices
                 ? question.choices[question.answer] : question.answer"></b>
             </div>
-            <div class="item item-divider">Author</div>
-            <div class="item item-text-wrap" ng-bind="set.author"></div>
+            <div class="item item-divider mt-3">Author</div>
+            <div class="item item-text-wrap mb-3" ng-bind="set.author"></div>
             <div class="item item-divider">Uploaded On</div>
-            <div class="item item-text-wrap" ng-bind="set.uploadedDate"></div>
+            <div class="item item-text-wrap mb-3" ng-bind="set.uploadedDate"></div>
           </div>
 
           <div>

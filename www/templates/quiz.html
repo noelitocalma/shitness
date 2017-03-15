@@ -1,4 +1,4 @@
-<ion-view cache-view="false" title="{{ quizInProgress === true ? 'Question ' + (questionNumber + 1) : 'Results' }}">
+<ion-view cache-view="false" title="{{ quizInProgress === true ? 'Question ' + (questionNumber + 1) + ' of ' + questions.length : 'Results' }}">
   <ion-content class="menu-content">
     <div class=""
       ng-if="quizInProgress === true">
