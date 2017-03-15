@@ -343,6 +343,7 @@ angular.module('starter.controllers', [])
 
     $scope.isUsernameSet = true
     $localStorage.iMemoUsername = username
+    $state.go('app.subjects')
     // $localStorage.iMemoTimer = timer
   }
 })
@@ -362,59 +363,42 @@ angular.module('starter.controllers', [])
   // gets all uploaded sets
   Sets.query(function (data) {
     $scope.sets = data
+    $scope.sets.forEach((set) => {
+      if ($localStorage.customSets.find((custom) => custom.id === set.id) !== undefined) {
+        set.downloaded = true
+      }
+    })
   })
 
-  $scope.uploadedByUser = function (set) {
-    if ($localStorage.customSets.length <= 0) return false
-    let index = $localStorage.customSets.map((s) => s.id).indexOf(set.origId)
-    return index > -1 ? true : false
+  $scope.goToSet = function (id) {
+    $state.go('app.subject', {
+      type: 'custom',
+      subjectName: id
+    })
   }
 
-  $scope.downloadSet = function (id, origId) {
-    let index = $localStorage.customSets.map((s) => s.id).indexOf(origId)
-    let isUploadedByUser = $scope.uploadedByUser($scope.sets[$scope.sets.map((s) => s.origId).indexOf(origId)])
-
-    if (isUploadedByUser) {
-      $ionicPopup.alert({
-        title: 'Download Error',
-        cssClass: 'popup-assertive',
-        template: 'You uploaded this set.',
-        okType: 'button-assertive'
-      }).then(function () {
-        $scope.closeModal()
+  $scope.downloadSet = function (id) {
+    Sets.get({id: id}, function (data) {
+      let sets = $localStorage.customSets
+      sets.push(JSON.parse(JSON.stringify(data)))
+      $ionicPopup.confirm({
+        title: 'Download Successful',
+        cssClass: 'popup-success',
+        template: 'Set downloaded successfully. Download more?',
+        okType: 'button-balanced',
+        okText: 'Yes',
+        cancelText: 'No',
+        cancelType: 'button-calm'
+      }).then(function (res) {
+        if (!res) {
+          $scope.closeModal()
+          $state.go('app.mysets')
+        } else {
+          $scope.closeModal()
+          $state.go('app.downloadsets')
+        }
       })
-    } else {
-      if (index > -1) {
-        $ionicPopup.alert({
-          title: 'Download Confirm',
-          cssClass: 'popup-assertive',
-          template: 'You already have this set.',
-          okType: 'button-assertive',
-          okText: 'Close'
-        }).then(function (res) {
-          if (res) $scope.closeModal()
-        })
-      } else {
-        Sets.get({id: id}, function (data) {
-          let sets = $localStorage.customSets
-          sets.push(JSON.parse(JSON.stringify(data)))
-          $ionicPopup.confirm({
-            title: 'Download Successful',
-            cssClass: 'popup-success',
-            template: 'Set downloaded successfully. Download more?',
-            okType: 'button-balanced',
-            okText: 'Yes',
-            cancelText: 'No',
-            cancelType: 'button-calm'
-          }).then(function (res) {
-            if (!res) {
-              $scope.closeModal()
-              $state.go('app.mysets')
-            }
-          })
-        })
-      }
-    }
+    })
   }
 
   $ionicModal.fromTemplateUrl('download-set.html', {
