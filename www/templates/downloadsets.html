@@ -2,12 +2,30 @@
   <ion-content class="menu-content">
     <div class="card padding" ng-if="sets.length <= 0">
       <h3 class="text-center">
-        There are no sets available.
+        There are no sets available
       </h3>
     </div>
 
+    <div class="list" ng-show="sets.length > 0">
+      <label class="item item-input item-select">
+        <div class="input-label">
+          Filter by author type
+        </div>
+        <select ng-model="filterByAuthor">
+          <option value="all">All</option>
+          <option value="teacher">Teacher</option>
+          <option value="student">Student</option>
+        </select>
+      </label>
+    </div>
+
     <ion-list class="list-subjects">
-      <ion-item class="list-subjects__item" ng-repeat="set in sets" ng-click="viewSet(set)">{{ set.name }} by {{ set.author }}</ion-item>
+      <ion-item class="list-subjects__item"
+        ng-if="filterByAuthor === 'all' || filterByAuthor === set.authorType"
+        ng-repeat="set in sets"
+        ng-click="viewSet(set)">
+          {{ set.name }} by {{ set.author }}
+      </ion-item>
     </ion-list>
 
     <script id="download-set.html" type="text/ng-template">
@@ -33,6 +51,8 @@
             </div>
             <div class="item item-divider mt-3">Author</div>
             <div class="item item-text-wrap mb-3" ng-bind="set.author"></div>
+            <div class="item item-divider mt-3">Author type</div>
+            <div class="item item-text-wrap mb-3" ng-bind="set.authorType"></div>
             <div class="item item-divider">Uploaded On</div>
             <div class="item item-text-wrap mb-3" ng-bind="set.uploadedDate"></div>
           </div>

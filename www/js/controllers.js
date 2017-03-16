@@ -291,6 +291,8 @@ angular.module('starter.controllers', [])
   $scope.isUsernameSet = $localStorage.iMemoUsername !== undefined
   $scope.username = $localStorage.iMemoUsername
     ? angular.copy($localStorage.iMemoUsername) : ''
+  $scope.usertype = $localStorage.iMemoUsertype
+    ? angular.copy($localStorage.iMemoUsertype) : 'student'
   // $scope.timer = $localStorage.iMemoTimer
   //  ? angular.copy($localStorage.iMemoTimer) : ''
 
@@ -304,7 +306,7 @@ angular.module('starter.controllers', [])
     });
   }
 
-  $scope.saveSettings = function (username) {
+  $scope.saveSettings = function (username, usertype) {
     if (!username) {
       var alertPopup = $ionicPopup.alert({
         title: 'Validation Error',
@@ -342,7 +344,9 @@ angular.module('starter.controllers', [])
     });
 
     $scope.isUsernameSet = true
+    $scope.isUsertypeSet = true
     $localStorage.iMemoUsername = username
+    $localStorage.iMemoUsertype = usertype
     $state.go('app.subjects')
     // $localStorage.iMemoTimer = timer
   }
@@ -360,7 +364,7 @@ angular.module('starter.controllers', [])
 })
 
 .controller('DownloadSetsCtrl', function($scope, $state, $localStorage, $ionicModal, $ionicPopup, Sets) {
-  // gets all uploaded sets
+  $scope.filterByAuthor = 'all'
   $scope.username = $localStorage.iMemoUsername
   Sets.query(function (data) {
     $scope.sets = data
@@ -475,8 +479,10 @@ angular.module('starter.controllers', [])
     let index = $localStorage.customSets.map((v) => v.id).indexOf(_id)
     let set = $localStorage.customSets[index]
 
+    set.author = $localStorage.iMemoUsername
+    set.authorType = $localStorage.iMemoUsertype
+
     if (!set.uploadedDate) {
-      set.author = $localStorage.iMemoUsername
       set.uploadedDate = new Date()
       upload(set)
     } else {
