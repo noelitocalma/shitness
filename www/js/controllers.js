@@ -364,14 +364,23 @@ angular.module('starter.controllers', [])
 })
 
 .controller('DownloadSetsCtrl', function($scope, $state, $localStorage, $ionicModal, $ionicPopup, Sets) {
+  $scope.isSetsLoaded = false
   $scope.filterByAuthor = 'all'
   $scope.username = $localStorage.iMemoUsername
   Sets.query(function (data) {
     $scope.sets = data
+    $scope.isSetsLoaded = true
     $scope.sets.forEach((set) => {
       if ($localStorage.customSets.find((custom) => custom.id === set.id) !== undefined) {
         set.downloaded = true
       }
+    })
+  }, function (err) {
+    $ionicPopup.alert({
+      title: 'Downloading Sets',
+      template: 'Woops. Something went wrong. Cannot fetch sets.',
+      cssClass: 'popup-assertive',
+      okType: 'button-assertive'
     })
   })
 
@@ -520,7 +529,10 @@ angular.module('starter.controllers', [])
           template: 'Your set was uploaded successfully.',
           okType: 'button-balanced'
         });
-        window.location = '#/app/subjects/custom/' + set.id
+        $state.go('app.subject', {
+          type: 'custom',
+          subjectName: $scope.set.id
+        }, { reload: true })
       })
     }
   }
@@ -592,13 +604,15 @@ angular.module('starter.controllers', [])
     func: ''
   };
   $scope.type = $stateParams.type
-  var subjects = $localStorage.subjects
   var subjectName = $scope.subjectName = $stateParams.subjectName
-  var set = $localStorage.customSets[$localStorage.customSets.map((v) => v.id ).indexOf(convertIndexOf(subjectName))]
 
   if ($stateParams.type !== 'custom') {
+    var subjects = $localStorage.subjects
+    var set = subjects[subjects.map((v) => v.name ).indexOf(convertIndexOf(subjectName))]
     $scope.questions = shuffle(getQuestions(subjects, subjectName))
   } else {
+    var subjects = $localStorage.customSets
+    var set = subjects[subjects.map((v) => v.id ).indexOf(convertIndexOf(subjectName))]
     $scope.questions = shuffle(getCustomQuestions($localStorage.customSets, $stateParams.subjectName))
   }
 
