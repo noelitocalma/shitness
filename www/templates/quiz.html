@@ -1,4 +1,4 @@
-<ion-view cache-view="false" title="{{ quizInProgress === true ? 'Question ' + (questionNumber + 1) : 'Results' }}">
+<ion-view cache-view="false" title="{{ quizInProgress === true ? 'Question ' + (questionNumber + 1) + ' of ' + questions.length : 'Results' }}">
   <ion-content class="menu-content">
     <div class=""
       ng-if="quizInProgress === true">
@@ -19,15 +19,16 @@
                 <input type="text" placeholder="Type your answer here" ng-model="choice.key" ng-keyup="$event.keyCode == 13 ? nextQuestion() : null">
               </label>
               <div class="" ng-if="questions[questionNumber].hasOwnProperty('choices')">
+                <div class="item item-divider">Select the best answer</div>
                 <ion-radio
                   ng-repeat="(key, value) in questions[questionNumber].choices"
                   ng-model="choice.key"
                   ng-value="key">{{ value }}</ion-radio>
-                <button class="button button-block button-balanced"
-                  ng-click="nextQuestion()">
-                    Next
-                </button>
               </div>
+              <button class="button button-block button-balanced"
+                ng-click="nextQuestion()">
+                  <i class="ion-arrow-right-c"></i> Next
+              </button>
             </div>
         </div>
     </div>
@@ -35,19 +36,26 @@
       ng-if="quizInProgress === false">
         <h4>You got</h4>
         <h1 style="margin-top: 0;" ng-bind="score + '/' + questions.length"></h1>
-        <h4>CORRECT ANSWERS</h4>
+        <h5>CORRECT ANSWERS</h5>
+        <h4 ng-if="score > (questions.length / 2)">Congratulations</h4>
+        <h4 ng-if="score <= (questions.length / 2)">It seems you need to study hard.</h4>
+        <h4 ng-if="score >= questions.length">Perfect !</h4>
         <div class="">
-          <a class="button button-balanced button-block" ng-href="#/app/subjects/{{ courseName }}/{{ subjectName }}">continue</a>
-          <a class="button button-balanced button-block" href="javasctip:void(0)" on-tap="showFullDetails()">see full details</a>
+          <a class="button button-balanced button-block" ng-href="#/app/subjects/{{ type }}/{{ subjectName }}">Continue <i class="ion-arrow-right-c"></i></a>
+          <a class="button button-balanced button-block" href="javasctip:void(0)" on-tap="showFullDetails()">See full details <i class="ion-eye"></i></a>
         </div>
     </div>
     <div class="padding"
       ng-if="fullDetailsMode === true">
-        <div ng-repeat="question in questions" class="card padding">
-          Question: {{ question.question }}<br>
-          Correct answer: {{ question.answer }} - {{ question.choices[question.answer] }}<br>
-          Your answer: {{ question.userAnswer }} - {{ question.choices[question.userAnswer] }}
+        <div class="item item-divider">Your Quiz Details</div>
+        <div ng-repeat="question in questions" class="item padding">
+          <b>Question:</b> {{ question.question }}<br>
+          <b>Correct answer:</b> {{ question.answer }} - {{ question.choices[question.answer] }}<br>
+          <b>Your answer: </b> {{ question.userAnswer }} - {{ question.choices[question.userAnswer] }}
         </div>
     </div>
   </ion-content>
+  <button class="button button-balanced button-small" ng-click="openCalculator()" style="position: fixed; bottom: 10px; right: 10px;">
+    <i class="ion-calculator"></i>
+  </button>
 </ion-view>

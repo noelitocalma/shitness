@@ -1,1 +1,16 @@
 /* Empty. Add your own CSS if you like */
+.swiper-container .swiper-pagination.ng-hide {
+  display: block !important;
+}
+
+.swiper-pagination-bullet {
+  background: #fff !important;
+}
+
+.swiper-slide {
+  padding-top: 20px;
+}
+
+input[readonly] {
+  background-color: transparent !important;
+}

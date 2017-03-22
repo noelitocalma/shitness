@@ -2,18 +2,36 @@
 <widget id="com.ionicframework.sidemenu781829" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
   <name>iMemo</name>
   <description>
-        A reviewer app.
+    iMemo is an android-based mobile learning tool
+    application that is designed for the students of present
+    generation. It can ease the student’s process of
+    studying which can help them improve their
+    knowledge on their lessons.
+    The letter I in iMemo symbolizes one’s self. The word
+    memo is an abbreviation for memorize which
+    described as acquiring information, commit to
+    memory, and learn by heart. It is also an abbreviation
+    for memorandum that is originated from the Latin
+    verbal expression memorandum est, which is the
+    gerundive form of the verb memoro – to mention, call
+    to mind, recount, relate, which means it must be remembered.
     </description>
-  <author email="you@example.com" href="http://example.com/"/>
+  <author email="you@example.com" href="http://example.com/">Anz Sly B. Sibayan</author>
+  <author email="you@example.com" href="http://example.com/">Samantha Denise R. Mercado</author>
+  <author email="you@example.com" href="http://example.com/">Sedrick John M. Liwag</author>
+  <author email="you@example.com" href="http://example.com/">Terrence Gil M. Abrenilla</author>
   <content src="index.html"/>
   <access origin="*"/>
+  <allow-navigation href="http://*/*"/>
   <preference name="webviewbounce" value="false"/>
   <preference name="UIWebViewBounce" value="false"/>
   <preference name="DisallowOverscroll" value="true"/>
   <preference name="FadeSplashScreenDuration" value="2000"/>
-  <preference name="android-minSdkVersion" value="19"/>
-  <preference name="android-targetSdkVersion" value="25" />
+  <preference name="android-minSdkVersion" value="14"/>
+  <preference name="android-targetSdkVersion" value="19"/>
   <preference name="BackupWebStorage" value="none"/>
+  <preference name="FadeSplashScreen" value="false"/>
+  <preference name="FadeSplashScreenDuration" value="2000"/>
   <preference name="SplashScreen" value="screen"/>
   <preference name="SplashScreenDelay" value="3000"/>
   <feature name="StatusBar">
@@ -62,8 +80,6 @@
     <splash src="resources/android/splash/drawable-land-mdpi-screen.png" density="land-mdpi"/>
     <splash src="resources/android/splash/drawable-land-hdpi-screen.png" density="land-hdpi"/>
     <splash src="resources/android/splash/drawable-land-xhdpi-screen.png" density="land-xhdpi"/>
-    <splash src="resources/android/splash/drawable-land-xxhdpi-screen.png" density="land-xxhdpi"/>
-    <splash src="resources/android/splash/drawable-land-xxxhdpi-screen.png" density="land-xxxhdpi"/>
     <splash src="resources/android/splash/drawable-port-ldpi-screen.png" density="port-ldpi"/>
     <splash src="resources/android/splash/drawable-port-mdpi-screen.png" density="port-mdpi"/>
     <splash src="resources/android/splash/drawable-port-hdpi-screen.png" density="port-hdpi"/>
@@ -71,4 +87,5 @@
     <splash src="resources/android/splash/drawable-port-xxhdpi-screen.png" density="port-xxhdpi"/>
     <splash src="resources/android/splash/drawable-port-xxxhdpi-screen.png" density="port-xxxhdpi"/>
   </platform>
+  <icon src="resources/android/icon/drawable-xhdpi-icon.png"/>
 </widget>

@@ -1,0 +1,41 @@
+<ion-view cache-view="false" view-title="Settings">
+  <ion-content class="menu-content padding">
+    <div class="item item-divider">Nickname</div>
+    <label class="item item-input">
+      <input type="text" placeholder="Nickname" ng-click="informUsername()"
+        ng-readonly="isUsernameSet" ng-maxlength="100" ng-model="username">
+    </label>
+    <div class="list">
+      <label class="item item-input item-select">
+        <div class="input-label">
+          User type
+        </div>
+        <select ng-model="usertype" ng-click="informUserType()" ng-disabled="isUserTypeSet">
+          <option value="student">Student</option>
+          <option value="teacher">Teacher</option>
+        </select>
+      </label>
+      <label class="item item-input item-select">
+        <div class="input-label">
+          Profession
+        </div>
+        <select ng-model="userProfession" ng-click="informUserProfession()" ng-disabled="isUserProfessionSet">
+          <option value="EDUCATION">EDUCATION</option>
+          <option value="ACCOUNTING">ACCOUNTING</option>
+          <option value="MISCELLANEOUS">MISCELLANEOUS</option>
+        </select>
+      </label>
+    </div>
+    <!-- <small class="assertive">You can only set your username once.</small>
+    <div class="item item-divider mt-3">Timer</div>
+    <label class="item item-input">
+      <input type="number" placeholder="Timer (seconds)" ng-max="90" ng-min="10" ng-model="timer">
+    </label> -->
+
+    <button class="button button-balanced button-block"
+      ng-disabled="isUsernameSet && isUserTypeSet && isUserProfessionSet"
+      ng-click="saveSettings(username, usertype, userProfession)">
+      Save Settings
+    </button>
+  </ion-content>
+</ion-view>

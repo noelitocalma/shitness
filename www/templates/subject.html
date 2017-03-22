@@ -1,16 +1,48 @@
-<ion-view view-title="Subject">
+<ion-view cache-view="false" view-title="Subject">
   <ion-content class="menu-content">
     <div class="padding">
-      <h3 class="title text-center" ng-bind="subjectName"></h3>
+      <div class="text-center" ng-if="type === 'custom'">
+        <button class="button button-positive button-small w-30"
+          ng-click="uploadSets(customId)">
+          <i class="icon ion-android-upload"></i> Upload
+        </button>
+        <button class="button button-balanced button-small w-30"
+          ng-click="editSets(customId)">
+          <i class="icon ion-edit"></i> Edit
+        </button>
+        <button class="button button-assertive button-small w-30"
+          ng-click="deleteSets(customId)">
+          <i class="icon ion-android-delete"></i> Delete
+        </button>
+      </div>
+      <h3 class="title text-center">
+        <span ng-bind="subjectName"></span>
+      </h3>
       <div class="row text-center">
-        <a class="col" ng-href="#/app/review/{{ courseName }}/{{ subjectName }}">
+        <a class="col" ng-href="#/app/review/{{type}}/{{ customId || subjectName }}">
           <div class="balanced padding-bottom">Review</div>
           <img class="img-fluid" src="img/review.png" alt="">
         </a>
-        <a class="col" ng-href="#/app/quiz/{{ courseName }}/{{ subjectName }}">
+        <a class="col" ng-href="#/app/quiz/{{type}}/{{ customId || subjectName }}">
           <div class="balanced padding-bottom">Quiz</div>
           <img class="img-fluid" src="img/exam.png" alt="">
         </a>
+      </div>
+
+      <div class="card">
+        <div class="item item-divider">Timer</div>
+        <div class="item">
+          {{ timer >= 5 ? timer : '20 (default)' }}
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="item item-divider">Terms & Definition</div>
+        <div class="item" ng-repeat="question in questions">
+          <div class="item-text-wrap" ng-bind="question.question"></div> -
+          <b ng-bind="question.hasOwnProperty('choices') && question.choices
+            ? question.choices[question.answer] : question.answer"></b>
+        </div>
       </div>
     </div>
   </ion-content>

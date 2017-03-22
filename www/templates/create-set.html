@@ -1,0 +1,111 @@
+<ion-view cache-view="false" view-title="{{editMode ? 'Edit Set' : 'Create Set'}}">
+  <ion-content class="menu-content padding">
+    <div class="item item-divider mt-2">Set Name</div>
+    <label class="item item-input padding-bottom  mb-3">
+      <input type="text" placeholder="Set Name" ng-model="set.name">
+    </label>
+
+    <div class="item item-divider mt-2">Timer</div>
+    <label class="item item-input padding-bottom  mb-3">
+      <input type="number" placeholder="Timer duration (seconds)" ng-model="set.timer">
+    </label>
+
+    <div class="item item-divider">New Question</div>
+    <label class="item item-input">
+      <input type="text" placeholder="Question" ng-model="question.question">
+    </label>
+    <label class="item item-input item-select">
+      <div class="input-label">
+        Answer type
+      </div>
+      <select ng-model="question.answerType">
+        <option value="text">Text</option>
+        <option value="choices">Choices</option>
+      </select>
+    </label>
+
+    <label class="item item-input"
+      ng-if="question.answerType === 'text'">
+      <input type="text" placeholder="Answer" ng-model="question.answer">
+    </label>
+
+    <div class=""
+      ng-if="question.answerType === 'choices'">
+      <label class="item item-input item-select">
+        <div class="input-label">
+          Answer
+        </div>
+        <select ng-model="question.answer">
+          <option value="{{ choice }}" ng-repeat="choice in question.choices">{{ choice }}</option>
+        </select>
+      </label>
+      <div class="row p-0">
+        <div class="col col-75 p-0">
+          <label class="item item-input">
+            <input type="text" placeholder="choice" ng-model="question.newChoice">
+          </label>
+        </div>
+        <div class="col p-0">
+          <button class="button button-block button-small button-balanced m-0 h-100" type="button" ng-click="addChoice()">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item item-divider mt-2" ng-if="question.choices.length > 0">Choices</div>
+    <ion-list>
+      <ion-item class="item-text-wrap" ng-repeat="choice in question.choices">
+        <span ng-bind="choice"></span>
+        <i class="icon ion-minus-circled assertive pull-right" ng-click="deleteChoice(choice)"></i>
+      </ion-item>
+    </ion-list>
+
+    <div class="row p-0 mt-2">
+      <div class="col py-0 pl-0" ng-class="{'pr-0': !editQuestionMode}">
+        <button class="button button-block button-balanced" type="button"
+            ng-click="addQuestion()"><i class="ion-plus-circled"></i> {{editQuestionMode ? 'Save': 'Add Question' }}</button>
+      </div>
+      <div class="col py-0 pr-0" ng-if="editQuestionMode">
+        <button class="button button-block button-assertive" type="button"
+          ng-class="{'mt-0': !editQuestionMode}"
+          ng-click="cancelEditQuestion()"><i class="ion-android-cancel"></i> Cancel</button>
+      </div>
+    </div>
+
+    <div class="item item-divider" ng-if="set.questions.length > 0">Questions</div>
+    <ion-list>
+      <ion-item class="item-text-wrap"
+        ng-repeat="question in set.questions">
+          <button class="button button-small button-assertive pull-right"  ng-click="deleteQuestion(question)">
+            <i class="icon ion-minus-circled"></i>
+          </button>
+          <button class="button button-small button-calm pull-right mr-1" ng-if="editMode"  ng-click="editQuestion(question)">
+            <i class="icon ion-edit"></i>
+          </button>
+          <div class="">
+            <b>Question:</b> {{ question.question }}
+          </div>
+          <div class="">
+            <b>Answer:</b> {{ question.answer }}
+          </div>
+          <div class="" ng-if="question.choices">
+            <div><b>Choices:</b></div>
+            <ul class="padding-left">
+              <li ng-repeat="(key, choice) in question.choices">
+                <b>{{ key }}:</b> {{choice}}
+              </li>
+            </ul>
+          </div>
+      </ion-item>
+    </ion-list>
+    <div class="row p-0">
+      <div class="col py-0 pl-0" ng-class="{'pr-0': !editMode}">
+        <button class="button button-block button-balanced" type="button"
+          ng-click="addSet()"><i ng-class="editMode ? 'ion-checkmark-circled' : 'ion-plus-circled'"></i>  {{editMode ? 'Save': 'Add' }} Set</button>
+      </div>
+      <div class="col py-0 pr-0" ng-if="editMode">
+        <button class="button button-block button-assertive" type="button"
+          ng-click="cancelEditSet()"><i class="ion-android-cancel"></i> Cancel</button>
+      </div>
+    </div>
+  </ion-content>
+</ion-view>

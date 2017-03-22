@@ -1,0 +1,77 @@
+<ion-view cache-view="false" view-title="Download Sets">
+  <ion-content class="menu-content">
+
+    <div class="text-center h-100 w-100 mt-5 pt-5" ng-if="!isSetsLoaded">
+      <ion-spinner icon="spiral"></ion-spinner>
+      <small class="d-block">fetching sets</small>
+    </div>
+
+    <div class="card padding" ng-if="sets.length <= 0">
+      <h3 class="text-center">
+        There are no sets available
+      </h3>
+    </div>
+
+    <div class="list mb-0" ng-show="sets.length > 0">
+      <label class="item item-input item-select">
+        <div class="input-label">
+          Filter by author type
+        </div>
+        <select ng-model="filterByAuthor">
+          <option value="all">All</option>
+          <option value="teacher">Teacher</option>
+          <option value="student">Student</option>
+        </select>
+      </label>
+    </div>
+
+    <ion-list class="list-subjects">
+      <ion-item class="list-subjects__item"
+        ng-if="filterByAuthor === 'all' || filterByAuthor === set.authorType"
+        ng-repeat="set in sets"
+        ng-click="viewSet(set)">
+          {{ set.name }} by {{ set.author }}
+      </ion-item>
+    </ion-list>
+
+    <script id="download-set.html" type="text/ng-template">
+      <ion-modal-view>
+        <div class="bar bar-header bar-balanced">
+          <h1 class="title">Download Set</h1>
+        </div>
+        <ion-content class="padding">
+          <div class="mt-5">
+            <button class="button button-assertive button-small button-block"
+              ng-if="username === set.author" ng-click="deleteUploadedSet(set)">
+              Delete this set.
+            </button>
+            <div class="item item-divider">Set Name</div>
+            <div class="item item-text-wrap mb-3" ng-bind="set.name"></div>
+            <div class="item item-divider">Timer</div>
+            <div class="item item-text-wrap mb-3">{{ set.timer || '20' }} seconds</div>
+            <div class="item item-divider">Questions</div>
+            <div class="item" ng-repeat="question in set.questions">
+              <div class="item-text-wrap" ng-bind="question.question"></div> -
+              <b ng-bind="question.hasOwnProperty('choices') && question.choices
+                ? question.choices[question.answer] : question.answer"></b>
+            </div>
+            <div class="item item-divider mt-3">Author</div>
+            <div class="item item-text-wrap mb-3" ng-bind="set.author"></div>
+            <div class="item item-divider mt-3">Author type</div>
+            <div class="item item-text-wrap mb-3" ng-bind="set.authorType"></div>
+            <div class="item item-divider mt-3">Author Ptofession</div>
+            <div class="item item-text-wrap mb-3" ng-bind="set.authorProfession"></div>
+            <div class="item item-divider">Uploaded On</div>
+            <div class="item item-text-wrap mb-3" ng-bind="set.uploadedDate"></div>
+          </div>
+
+          <div>
+            <button class="button button-assertive w-49" ng-click="closeModal()">Close</button>
+            <button class="button button-balanced w-49" ng-if="set.downloaded !== true" ng-click="downloadSet(set.id)">Download</button>
+            <button class="button button-balanced w-49" ng-if="set.downloaded === true" ng-click="goToSet(set.id)">View Set</button>
+          </div>
+        </ion-content>
+      </ion-modal-view>
+    </script>
+  </ion-content>
+</ion-view>
