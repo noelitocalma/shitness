@@ -289,12 +289,15 @@ angular.module('starter.controllers', [])
 
 .controller('SettingsCtrl', function($scope, $state, $localStorage, $ionicPopup) {
   $scope.isUsernameSet = $localStorage.iMemoUsername !== undefined
+  $scope.isUserTypeSet = $localStorage.iMemoUsertype !== undefined
+  $scope.isUserProfessionSet = $localStorage.iMemoUserProfession !== undefined
+
   $scope.username = $localStorage.iMemoUsername
     ? angular.copy($localStorage.iMemoUsername) : ''
   $scope.usertype = $localStorage.iMemoUsertype
     ? angular.copy($localStorage.iMemoUsertype) : 'student'
-  // $scope.timer = $localStorage.iMemoTimer
-  //  ? angular.copy($localStorage.iMemoTimer) : ''
+  $scope.userProfession = $localStorage.iMemoUserProfession
+    ? angular.copy($localStorage.iMemoUserProfession) : ''
 
   $scope.informUsername = function () {
     if (!$scope.isUsernameSet) return
@@ -306,7 +309,27 @@ angular.module('starter.controllers', [])
     });
   }
 
-  $scope.saveSettings = function (username, usertype) {
+  $scope.informUserType = function () {
+    if (!$scope.isUserTypeSet) return
+    var alertPopup = $ionicPopup.alert({
+      title: 'Username',
+      cssClass: 'popup-assertive',
+      template: 'User type cannot be changed.',
+      okType: 'button-assertive'
+    });
+  }
+
+  $scope.informUserProfession = function () {
+    if (!$scope.isUserProfessionSet) return
+    var alertPopup = $ionicPopup.alert({
+      title: 'Username',
+      cssClass: 'popup-assertive',
+      template: 'Profession cannot be changed.',
+      okType: 'button-assertive'
+    });
+  }
+
+  $scope.saveSettings = function (username, usertype, userProfession) {
     if (!username) {
       var alertPopup = $ionicPopup.alert({
         title: 'Validation Error',
@@ -316,25 +339,6 @@ angular.module('starter.controllers', [])
       });
       return
     }
-
-    // if (!timer) {
-    //   var alertPopup = $ionicPopup.alert({
-    //     title: 'Default Values',
-    //     cssClass: 'popup-assertive',
-    //     template: 'No value for timer. Default value of 20 seconds will be used.',
-    //     okType: 'button-assertive'
-    //   });
-    // }
-    //
-    // if (timer && (timer < 10 || timer > 90)) {
-    //   var alertPopup = $ionicPopup.alert({
-    //     title: 'Validation Error',
-    //     cssClass: 'popup-assertive',
-    //     template: 'Allowed values for the timer is 10 to 90 seconds',
-    //     okType: 'button-assertive'
-    //   });
-    //   return
-    // }
 
     var alertPopup = $ionicPopup.alert({
       title: 'Settings Saved',
@@ -347,6 +351,7 @@ angular.module('starter.controllers', [])
     $scope.isUsertypeSet = true
     $localStorage.iMemoUsername = username
     $localStorage.iMemoUsertype = usertype
+    $localStorage.iMemoUserProfession = userProfession
     $state.go('app.subjects')
     // $localStorage.iMemoTimer = timer
   }
@@ -367,8 +372,13 @@ angular.module('starter.controllers', [])
   $scope.isSetsLoaded = false
   $scope.filterByAuthor = 'all'
   $scope.username = $localStorage.iMemoUsername
-  Sets.query(function (data) {
+  Sets.query({
+    filter: {
+      where: { authorProfession: $localStorage.iMemoUserProfession}
+    }
+  }, function (data) {
     $scope.sets = data
+
     $scope.isSetsLoaded = true
     $scope.sets.forEach((set) => {
       if ($localStorage.customSets.find((custom) => custom.id === set.id) !== undefined) {
